@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 3%;
+    --foreground: 41 55% 85%;
+    --card: 0 0% 6%;
+    --card-foreground: 41 55% 85%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 41 55% 85%;
+    --primary: 44 53% 54%;
+    --primary-foreground: 0 0% 3%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 41 55% 85%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 41 20% 55%;
+    --accent: 0 70% 21%;
+    --accent-foreground: 41 55% 85%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 44 20% 18%;
+    --input: 0 0% 14%;
+    --ring: 44 53% 54%;
+    --radius: 0.25rem;
+    --gold: 44 53% 54%;
+    --gold-light: 45 86% 69%;
+    --gold-dark: 43 40% 40%;
+    --maroon: 0 70% 21%;
+    --parchment: 41 55% 85%;
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 41 55% 85%;
+    --sidebar-primary: 44 53% 54%;
+    --sidebar-primary-foreground: 0 0% 3%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 41 55% 85%;
+    --sidebar-border: 44 20% 18%;
+    --sidebar-ring: 44 53% 54%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Montserrat', sans-serif;
+    cursor: none;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(0 0% 3%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(44 53% 54% / 0.4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(44 53% 54% / 0.7);
+}
+
+/* Gold shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(44 53% 54%) 0%,
+    hsl(45 86% 69%) 25%,
+    hsl(44 53% 54%) 50%,
+    hsl(45 86% 69%) 75%,
+    hsl(44 53% 54%) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Button shimmer sweep */
+@keyframes btn-shimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, hsl(44 53% 54%), hsl(43 40% 40%));
+  color: hsl(0 0% 3%);
+  font-weight: 600;
+}
+.btn-gold::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsl(45 86% 69% / 0.4), transparent);
+  transition: none;
+}
+.btn-gold:hover::after {
+  animation: btn-shimmer 0.6s ease-out;
+}
+
+/* Grain overlay */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 20s linear infinite;
+}
+
+/* Custom cursor styles - override on mobile */
+@media (pointer: coarse) {
+  body { cursor: auto; }
+}
+
+/* Typewriter */
+@keyframes blink-caret {
+  50% { border-color: transparent; }
+}

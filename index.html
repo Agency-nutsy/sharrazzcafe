@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>736 A.D. — Culinary Bar & Lounge | Hudson Lane, New Delhi</title>
+    <meta name="description" content="736 A.D. — Where old charm meets new age flair. Premium culinary bar and lounge on Hudson Lane, New Delhi. Live music, rooftop dining, signature cocktails." />
+    <meta property="og:title" content="736 A.D. — Culinary Bar & Lounge" />
+    <meta property="og:description" content="Where old charm meets new age flair. Hudson Lane, New Delhi." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "736 A.D.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "G-15/B, Vijay Nagar, Hudson Lane",
+        "addressLocality": "New Delhi",
+        "addressRegion": "Delhi",
+        "postalCode": "110009",
+        "addressCountry": "IN"
+      },
+      "telephone": "+918010000249",
+      "openingHours": "Mo-Su 11:00-00:30",
+      "servesCuisine": ["Global", "Indian", "Chinese", "Continental"],
+      "priceRange": "₹₹₹"
+    }
+    </script>
+  </head>
+  <body>
+    <canvas id="gold-dust" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      const canvas = document.getElementById('gold-dust');
+      const ctx = canvas.getContext('2d');
+
+      // Set canvas to full screen
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particlesArray = [];
+      const numberOfParticles = 150; // Increased from 70 for slightly more density
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          // Very small crystals (0.5 to 1.5 pixels)
+          this.size = Math.random() * 1 + 0.5;
+          // Extremely slow drifting movement
+          this.speedX = Math.random() * 0.3 - 0.15;
+          this.speedY = Math.random() * 0.3 - 0.15;
+          // Faint opacity for that "barely visible" premium feel
+          this.opacity = Math.random() * 0.3 + 0.1;
+        }
+        
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+
+          // Wrap around screen
+          if (this.x > canvas.width) this.x = 0;
+          else if (this.x < 0) this.x = canvas.width;
+          if (this.y > canvas.height) this.y = 0;
+          else if (this.y < 0) this.y = canvas.height;
+        }
+        
+        draw() {
+          // Premium Metallic Gold color
+          ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`; 
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function init() {
+        for (let i = 0; i < numberOfParticles; i++) {
+          particlesArray.push(new Particle());
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particlesArray.length; i++) {
+          particlesArray[i].update();
+          particlesArray[i].draw();
+        }
+        requestAnimationFrame(animate);
+      }
+
+      init();
+      animate();
+
+      // Handle window resize seamlessly
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+    </script>
+  </body>
+</html>
