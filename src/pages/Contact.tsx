@@ -215,13 +215,13 @@ const Contact = () => (
         <MagneticTile delay={0.3} className="lg:col-span-3 min-h-[500px]">
           {/* EMBED LINK UPDATED */}
           <a 
-            href="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.805565947981!2d77.2043207!3d28.695462299999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfdf25ec4aa73%3A0x839847192c9ab5cb!2sThe%20litup%20cafe!5e0!3m2!1sen!2sin!4v1774514916358!5m2!1sen!2sin" 
+            href="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.805565947981!2d77.2043207!3d28.695462299999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfdf25ec4aa73%3A0x839847192c9ab5cb!2sThe%20litup%20cafe!5e0!3m2!1sen!2sin!4v1774520254922!5m2!1sen!2sin" 
             target="_blank" 
             rel="noopener noreferrer"
             className="block h-full w-full relative group cursor-pointer"
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.805565947981!2d77.2043207!3d28.695462299999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfdf25ec4aa73%3A0x839847192c9ab5cb!2sThe%20litup%20cafe!5e0!3m2!1sen!2sin!4v1774514916358!5m2!1sen!2sin"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.805565947981!2d77.2043207!3d28.695462299999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfdf25ec4aa73%3A0x839847192c9ab5cb!2sThe%20litup%20cafe!5e0!3m2!1sen!2sin!4v1774520254922!5m2!1sen!2sin"
               width="100%"
               height="100%"
               style={{ 
