@@ -1,126 +1,125 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
-  const [isShattering, setIsShattering] = useState(false);
+  const [isRevealing, setIsRevealing] = useState(false);
 
-  // Pre-calculate the sand particles so they are ready the moment the loader hits 100%
-  const particles = useMemo(() => {
-    return Array.from({ length: 150 }).map((_, i) => ({
-      id: i,
-      // Start randomly within the bounding box of the logo
-      startX: (Math.random() - 0.5) * 250,
-      startY: (Math.random() - 0.5) * 100,
-      // Explode outwards and drift upwards like wind blowing sand
-      endX: (Math.random() - 0.5) * 800,
-      endY: Math.random() * -600 - 100,
-      // Varying tiny crystal sizes
-      size: Math.random() * 3 + 1,
-      // Staggered explosions
-      delay: Math.random() * 0.15,
-      duration: 0.8 + Math.random() * 0.5,
-    }));
+  // --- FIXED: Lock the body scroll so the scrollbar disappears during loading ---
+  useEffect(() => {
+    // Hide scrollbar when loader mounts
+    document.body.style.overflow = "hidden";
+    return () => {
+      // Restore scrollbar when loader unmounts
+      document.body.style.overflow = "";
+    };
   }, []);
 
   useEffect(() => {
-    // If we are shattering, wait for the particles to fly away before completing
-    if (isShattering) {
+    if (isRevealing) {
+      // Wait for the split animation to completely finish before unmounting the component
       const timer = setTimeout(() => {
         onComplete();
-      }, 1400); // 1.4 seconds of cinematic dust blowing
+      }, 1300); // 1.3 seconds guarantees the doors are fully off-screen
       return () => clearTimeout(timer);
     }
 
-    // Normal loading progress
     const interval = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) {
           clearInterval(interval);
-          setIsShattering(true); // Trigger the shatter effect instead of immediately completing
+          setIsRevealing(true);
           return 100;
         }
-        return p + 2;
+        // Add a little randomness to the loading speed for a natural feel
+        return p + Math.floor(Math.random() * 4) + 1;
       });
     }, 30);
     
     return () => clearInterval(interval);
-  }, [isShattering, onComplete]);
+  }, [isRevealing, onComplete]);
 
   return (
-    <AnimatePresence>
+    // The main container doesn't fade, it just holds the doors that slide away
+    <div className="fixed inset-0 z-[9999] pointer-events-none flex overflow-hidden">
+      
+      {/* --- LEFT MAGMA DOOR --- */}
       <motion.div
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
-        className="fixed inset-0 z-[9999] bg-background flex flex-col items-center justify-center overflow-hidden"
+        initial={{ x: 0 }}
+        animate={{ x: isRevealing ? "-100%" : 0 }}
+        transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.1 }}
+        className="absolute top-0 left-0 w-1/2 h-full bg-[#0a0402] flex justify-end z-20"
       >
-        {/* THE MAIN CONTENT (Fades to blur/dust when shattering) */}
+        {/* Glowing Hot Edge that appears when splitting */}
         <motion.div
-          animate={isShattering ? { opacity: 0, scale: 1.1, filter: "blur(12px)" } : { opacity: 1, scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: 0.4, ease: "easeIn" }}
-          className="relative z-10 flex flex-col items-center justify-center gap-8"
-        >
-          <motion.h1
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="font-serif text-5xl md:text-7xl font-bold text-shimmer tracking-wider"
-          >
-            736 A.D.
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-muted-foreground text-xs tracking-[0.3em] uppercase"
-          >
-            Old Charm. New Age Flair.
-          </motion.p>
-          <div className="w-48 h-[2px] bg-secondary rounded-full overflow-hidden mt-4">
-            <motion.div
-              className="h-full bg-gradient-to-r from-gold-dark via-primary to-gold-light"
-              style={{ width: `${progress}%` }}
-              transition={{ duration: 0.1 }}
-            />
-          </div>
-        </motion.div>
-
-        {/* THE GOLDEN SAND SHATTER PARTICLES (Hidden until 100%) */}
-        {isShattering && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-            {particles.map((p) => (
-              <motion.div
-                key={p.id}
-                initial={{ 
-                  x: p.startX, 
-                  y: p.startY, 
-                  opacity: 1, 
-                  scale: 1 
-                }}
-                animate={{ 
-                  x: p.endX, 
-                  y: p.endY, 
-                  opacity: 0, 
-                  scale: 0,
-                  rotate: Math.random() * 360
-                }}
-                transition={{ 
-                  duration: p.duration, 
-                  delay: p.delay, 
-                  ease: [0.25, 0.46, 0.45, 0.94] // Custom cubic-bezier for a physical "wind-blown" feel
-                }}
-                className="absolute rounded-full bg-[#d4af37]"
-                style={{ 
-                  width: p.size, 
-                  height: p.size, 
-                  boxShadow: "0 0 10px rgba(212,175,55,0.8)" 
-                }}
-              />
-            ))}
-          </div>
-        )}
+          animate={{ opacity: isRevealing ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-4 h-full bg-gradient-to-r from-transparent to-[#ff5a00] opacity-0 shadow-[10px_0_50px_20px_rgba(255,90,0,0.8)]"
+        />
       </motion.div>
-    </AnimatePresence>
+
+      {/* --- RIGHT MAGMA DOOR --- */}
+      <motion.div
+        initial={{ x: 0 }}
+        animate={{ x: isRevealing ? "100%" : 0 }}
+        transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1], delay: 0.1 }}
+        className="absolute top-0 right-0 w-1/2 h-full bg-[#0a0402] flex justify-start z-20"
+      >
+        {/* Glowing Hot Edge that appears when splitting */}
+        <motion.div
+          animate={{ opacity: isRevealing ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-4 h-full bg-gradient-to-l from-transparent to-[#ff5a00] opacity-0 shadow-[-10px_0_50px_20px_rgba(255,90,0,0.8)]"
+        />
+      </motion.div>
+
+      {/* --- CENTRAL FLASH EFFECT --- */}
+      {/* Creates a bright cinematic flash right when it hits 100% */}
+      {isRevealing && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="absolute inset-0 z-50 bg-[#ff5a00] mix-blend-overlay pointer-events-none"
+        />
+      )}
+
+      {/* --- LOADING CONTENT (Fades out BEFORE doors open) --- */}
+      <AnimatePresence>
+        {!isRevealing && (
+          <motion.div
+            exit={{ opacity: 0, scale: 1.2, filter: "blur(10px)" }}
+            transition={{ duration: 0.4, ease: "easeIn" }}
+            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto z-40"
+          >
+            {/* Brand Name with pulsating heat shadow */}
+            <motion.h1 
+              animate={{ textShadow: ["0px 0px 10px rgba(255,90,0,0.4)", "0px 0px 25px rgba(255,90,0,0.8)", "0px 0px 10px rgba(255,90,0,0.4)"] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-[0.2em] mb-12 text-white text-center"
+            >
+              LITUP
+            </motion.h1>
+
+            {/* Vertical Fire Thermometer */}
+            <div className="w-[2px] h-32 md:h-48 bg-white/10 relative rounded-full overflow-hidden mb-8">
+              <motion.div
+                className="absolute bottom-0 w-full bg-gradient-to-t from-[#8a1c00] via-[#ff4500] to-[#ffaa00] shadow-[0_0_15px_rgba(255,90,0,1)]"
+                style={{ height: `${progress}%` }}
+              />
+            </div>
+
+            {/* Progress Text */}
+            <div className="text-[#ff5a00] text-[10px] md:text-xs tracking-[0.4em] uppercase font-bold flex items-center gap-4">
+              <span className="w-6 h-[1px] bg-[#ff5a00]" />
+              Igniting {progress}%
+              <span className="w-6 h-[1px] bg-[#ff5a00]" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    </div>
   );
 };
 

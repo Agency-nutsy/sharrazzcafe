@@ -1,81 +1,86 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
-import { Phone, ChevronDown, Calendar, Armchair, Star, Music, MapPin, Instagram } from "lucide-react";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence, useMotionTemplate } from "framer-motion";
+import { Phone, ChevronDown, Calendar, Armchair, Star, MapPin, Instagram, Utensils } from "lucide-react";
 import SectionReveal from "@/components/SectionReveal";
-import heroImg from "@/assets/736 ad hero.png";
-import img2 from "@/assets/restaurant-2.webp";
-import img3 from "@/assets/restaurant-3.webp";
-import img4 from "@/assets/restaurant-4.webp";
+import heroImg from "@/assets/litup hero.png";
+import img2 from "@/assets/litup home 1.png";
+import img3 from "@/assets/litup home 2.png";
+import img4 from "@/assets/litup home 3.png";
 
-// --- THE SAND VORTEX REVEAL SYSTEM ---
-const HeroSandVortex = ({ onComplete }: { onComplete: () => void }) => {
-  const [phase, setPhase] = useState<"swirling" | "shattering">("swirling");
-
-  // Generate particles once so they don't reshuffle
-  const particles = useMemo(() => {
-    return Array.from({ length: 140 }).map((_, i) => ({
-      id: i,
-      angle: (i / 140) * Math.PI * 2,
-      radius: 10 + Math.random() * 350,
-      size: Math.random() * 3 + 1,
-      speed: 2 + Math.random() * 4,
-    }));
-  }, []);
+// ── VIGNETTE BURN HERO INTRO ────────────────
+const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
+  const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const shatterTimer = setTimeout(() => setPhase("shattering"), 3000);
-    const completeTimer = setTimeout(onComplete, 4200); // Allow time for shatter animation
-    return () => {
-      clearTimeout(shatterTimer);
-      clearTimeout(completeTimer);
+    const el = divRef.current;
+    if (!el) return;
+
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const MAX_R = Math.sqrt(W * W + H * H) / 2 * 1.15;
+
+    const BURN_DURATION = 1900;
+    const FADE_START    = 1750;
+    const TOTAL         = 2400;
+
+    const start = performance.now();
+    let rafId: number;
+
+    const animate = (now: number) => {
+      const elapsed = now - start;
+
+      if (elapsed >= TOTAL) {
+        el.style.opacity = "0";
+        onComplete();
+        return;
+      }
+
+      const burnP  = Math.min(1, elapsed / BURN_DURATION);
+      const eased  = 1 - Math.pow(1 - burnP, 2.4);
+      const r      = eased * MAX_R;
+
+      const glowP  = burnP < 0.45 ? burnP / 0.45 : 1 - ((burnP - 0.45) / 0.55);
+      const g      = Math.max(0, glowP);
+
+      const r0 = Math.max(0, r - 55);
+      const r1 = Math.max(0, r - 18);
+      const r2 = r + 22;
+      const r3 = r + 65;
+      const r4 = r + 130;
+
+      el.style.background = `radial-gradient(circle at 50% 50%,
+        transparent ${r0}px,
+        rgba(255,245,180,${0.95 * g}) ${r1}px,
+        rgba(255,90,0,${0.80 * g})   ${r2}px,
+        rgba(120,20,0,${0.55 * g})   ${r3}px,
+        rgba(4,2,1,1)                ${r4}px
+      )`;
+
+      if (elapsed >= FADE_START) {
+        const fp = (elapsed - FADE_START) / (TOTAL - FADE_START);
+        el.style.opacity = String(Math.max(0, 1 - fp));
+      }
+
+      rafId = requestAnimationFrame(animate);
     };
+
+    el.style.background = "rgb(4,2,1)";
+    el.style.opacity    = "1";
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
   }, [onComplete]);
 
   return (
-    <motion.div 
-      initial={{ opacity: 1 }}
-      animate={phase === "shattering" ? { opacity: 0 } : { opacity: 1 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
-      className="absolute inset-0 z-[50] bg-background flex items-center justify-center overflow-hidden pointer-events-none"
-    >
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="relative w-full h-full flex items-center justify-center"
-      >
-        {particles.map((p) => (
-          <motion.div
-            key={p.id}
-            className="absolute rounded-full bg-[#d4af37]"
-            style={{
-              width: p.size,
-              height: p.size,
-              x: Math.cos(p.angle) * p.radius,
-              y: Math.sin(p.angle) * p.radius,
-              boxShadow: "0 0 10px rgba(212,175,55,0.8)",
-            }}
-            animate={phase === "shattering" ? {
-              x: Math.cos(p.angle) * (p.radius + 800),
-              y: Math.sin(p.angle) * (p.radius + 800),
-              opacity: 0,
-              scale: 0,
-            } : {
-              opacity: [0.3, 1, 0.3],
-            }}
-            transition={{ 
-              duration: phase === "shattering" ? 1.5 : 2, 
-              repeat: phase === "swirling" ? Infinity : 0,
-              ease: "easeOut" 
-            }}
-          />
-        ))}
-      </motion.div>
-    </motion.div>
+    <div
+      ref={divRef}
+      className="absolute inset-0 z-[50] pointer-events-none"
+      style={{ background: "rgb(4,2,1)", opacity: 1 }}
+    />
   );
 };
 
-// MAGNETIC LIQUID GOLD BUTTON COMPONENT
+// ── MAGNETIC BUTTON ────────────────
 const MagneticButton = ({ children, to, href, className }: any) => {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -110,11 +115,106 @@ const MagneticButton = ({ children, to, href, className }: any) => {
   return to ? <Link to={to} className="inline-block">{innerContent}</Link> : <a href={href} className="inline-block">{innerContent}</a>;
 };
 
+// ── EMBER SPOTLIGHT CARD COMPONENT ────────────────
+const SpotlightCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <div
+      className={`group relative overflow-hidden ${className}`}
+      onMouseMove={handleMouseMove}
+    >
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-500 group-hover:opacity-100 z-0"
+        style={{
+          /* Toned down spotlight to 0.20 for a smoother glow */
+          background: useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(255, 90, 0, 0.20), transparent 80%)`,
+        }}
+      />
+      <div className="relative z-10 h-full w-full">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// ── 3D PARALLAX GLASS TILT CARD COMPONENT ────────────────
+const TiltCard = ({ exp }: { exp: any }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <div style={{ perspective: 1000 }} className="relative h-80 md:h-96">
+      <motion.div
+        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="absolute inset-0 group cursor-pointer overflow-visible rounded-xl shadow-2xl border border-primary/10 hover:border-primary/40 transition-colors duration-500"
+      >
+        <div className="absolute inset-0 rounded-xl bg-[#0a0402] overflow-hidden z-10">
+          <img src={exp.img} alt={exp.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" loading="lazy" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402] via-[#0a0402]/30 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
+          <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 mix-blend-overlay transition-colors duration-500" />
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-20 pointer-events-none" style={{ transform: "translateZ(60px)" }}>
+          <h3 className="font-serif text-2xl text-primary mb-2 drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">{exp.title}</h3>
+          <p className="text-foreground/90 text-sm leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 drop-shadow-[0_0_5px_rgba(0,0,0,0.8)]">{exp.desc}</p>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+// ── GLOWING KINETIC MARQUEE ────────────────
+const GlowingMarquee = () => {
+  return (
+    <div className="relative w-full overflow-hidden py-6 bg-[#0a0402]/80 border-y border-primary/20 flex group z-20 shadow-[0_0_30px_rgba(255,90,0,0.1)] backdrop-blur-sm">
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0a0402] via-transparent to-[#0a0402] z-10 pointer-events-none" />
+      <div className="flex whitespace-nowrap animate-marquee">
+        {[...Array(4)].map((_, i) => (
+          <span key={i} className="text-3xl md:text-5xl font-serif text-transparent font-bold tracking-[0.15em] mx-6 transition-all duration-500 group-hover:text-primary cursor-default" style={{ WebkitTextStroke: "1px rgba(255,90,0,0.4)" }}>
+            ✦ PREMIUM LOUNGE ✦ WOODFIRED PIZZAS ✦ SIGNATURE SHAKES ✦ PURE VEG 
+          </span>
+        ))}
+      </div>
+      <style>{`.animate-marquee { animation: marquee 25s linear infinite; } .group:hover .animate-marquee { animation-play-state: paused; }`}</style>
+    </div>
+  );
+};
+
 const stats = [
-  { icon: Calendar, label: "Est. 2018", end: 2018, prefix: "", isYear: true },
-  { icon: Armchair, label: "Seats", end: 150, prefix: "", suffix: "+" },
-  { icon: Star, label: "Rated", end: 4.3, prefix: "", suffix: "★", isDecimal: true },
-  { icon: Music, label: "Live Music Nightly", end: 0, prefix: "", isText: true },
+  { icon: Calendar, label: "Est.", end: 2017, prefix: "", isYear: true },
+  { icon: Armchair, label: "Seats", end: 60, prefix: "", suffix: "+" },
+  { icon: Star, label: "Rated", end: 3.8, prefix: "", suffix: "★", isDecimal: true },
+  { icon: Utensils, label: "Pure Veg Menu", end: 0, prefix: "", isText: true },
 ];
 
 const Counter = ({ end, isDecimal, isYear, isText, suffix }: any) => {
@@ -130,12 +230,8 @@ const Counter = ({ end, isDecimal, isYear, isText, suffix }: any) => {
     let current = 0;
     const timer = setInterval(() => {
       current += increment;
-      if (current >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(current);
-      }
+      if (current >= end) { setCount(end); clearInterval(timer); }
+      else setCount(current);
     }, duration / steps);
     return () => clearInterval(timer);
   }, [started, end, isText]);
@@ -146,7 +242,7 @@ const Counter = ({ end, isDecimal, isYear, isText, suffix }: any) => {
     return () => obs.disconnect();
   }, []);
 
-  if (isText) return <span ref={ref} className="font-serif text-3xl md:text-4xl text-primary">♪</span>;
+  if (isText) return <span ref={ref} className="font-serif text-3xl md:text-4xl text-primary">✓</span>;
   return (
     <span ref={ref} className="font-serif text-3xl md:text-4xl text-primary">
       {isYear ? Math.floor(count) : isDecimal ? count.toFixed(1) : Math.floor(count)}
@@ -157,7 +253,7 @@ const Counter = ({ end, isDecimal, isYear, isText, suffix }: any) => {
 
 const TypewriterText = ({ text }: { text: string }) => {
   const [displayed, setDisplayed] = useState("");
-  const [started, setStarted] = useState(false);
+  const [started, setStarted]     = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -186,28 +282,44 @@ const PremiumHeading = ({ title }: { title: string }) => {
   const child = { hidden: { opacity: 0, y: 30, filter: "blur(8px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.8, ease: "easeOut" } } };
   return (
     <div className="text-center mb-16">
-      <motion.h2 variants={container} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="font-serif text-3xl md:text-5xl tracking-wider flex justify-center flex-wrap relative">
+      <motion.h2
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        className="font-serif text-3xl md:text-5xl tracking-wider flex justify-center flex-wrap relative"
+      >
         {letters.map((letter, index) => (
           <motion.span key={index} variants={child} className={`${letter === " " ? "w-3" : ""} inline-block`}>
-            <span className="bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(212,175,55,0.2)]" style={{ backgroundImage: "linear-gradient(110deg, #a17b20 0%, #d4af37 30%, #fffbd6 50%, #d4af37 70%, #a17b20 100%)", backgroundSize: "200% auto", animation: "moltenGold 4s linear infinite" }}>{letter}</span>
+            <span
+              // Deepened the shadow and color gradient for an ultra-premium, dark-hot iron look
+              className="bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(200,30,0,0.6)]"
+              style={{
+                backgroundImage: "linear-gradient(110deg, #8a1c00 0%, #ff4500 25%, #cc2900 50%, #ff4500 75%, #8a1c00 100%)",
+                backgroundSize: "200% auto",
+                animation: "emberFlow 4s linear infinite",
+              }}
+            >
+              {letter}
+            </span>
           </motion.span>
         ))}
       </motion.h2>
-      <style>{`@keyframes moltenGold { to { background-position: 200% center; } }`}</style>
+      <style>{`@keyframes emberFlow { to { background-position: 200% center; } }`}</style>
     </div>
   );
 };
 
 const experiences = [
-  { title: "Live Music Nights", desc: "Every night comes alive with soulful acoustics and electrifying beats.", img: img2 },
-  { title: "Rooftop Lounge", desc: "Dine under the stars with panoramic views of North Campus.", img: img3 },
-  { title: "Signature Cocktails", desc: "Crafted by master mixologists — each sip tells a story.", img: img4 },
+  { title: "Cozy Lounge Ambiance", desc: "Settle into our 2nd floor lounge on Hudson Lane — the perfect escape from the busy street below.", img: img2 },
+  { title: "Party & Group Events", desc: "Celebrate birthdays and special occasions with personalized setups and a dedicated reservations team.", img: img3 },
+  { title: "Signature Shakes & Drinks", desc: "From Cold Coffee to Kitkat Shakes — every sip on our menu is crafted to light up your day.", img: img4 },
 ];
 
 const reviews = [
-  { author: "Riya Sharma", text: "The rooftop lounge is absolutely breathtaking! Paired with their signature cocktails and live acoustic music, it was the perfect evening. A must-visit in North Campus.", rating: 5, date: "2 weeks ago" },
-  { author: "Aman Verma", text: "Old world charm perfectly blended with modern flair. The staff is incredibly attentive, and the ambiance makes you want to stay for hours. The food quality is exceptional.", rating: 5, date: "1 month ago" },
-  { author: "Sneha Gupta", text: "A hidden gem in Hudson Lane! The exotic pizza was delicious and the live music creates an electrifying atmosphere. This is easily my favorite spot for a weekend night out.", rating: 5, date: "3 months ago" }
+  { author: "Priya Mehta", text: "The ambiance on the 2nd floor is super cozy and the staff is incredibly warm. Had the Cold Coffee and Oreo Shake — both were amazing. Easily my go-to spot on Hudson Lane!", rating: 5, date: "2 weeks ago" },
+  { author: "Aman Verma", text: "Ordered the Farmfresh Pizza and Cheese Fries — absolute value for money. The place has a great vibe and the service is quick and friendly. Will definitely come back!", rating: 5, date: "1 month ago" },
+  { author: "Sneha Kapoor", text: "Perfect hangout spot near GTB Nagar! The Kitkat Shake is honestly addictive and the Cheese Chilly is a must-try. The lounge setting makes it great for groups too.", rating: 5, date: "3 weeks ago" },
 ];
 
 const Index = () => {
@@ -217,14 +329,13 @@ const Index = () => {
 
   const [isIntroComplete, setIsIntroComplete] = useState(false);
 
-  // Parallax Values
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { damping: 50, stiffness: 400 });
   const smoothY = useSpring(mouseY, { damping: 50, stiffness: 400 });
 
-  const bgX = useTransform(smoothX, [-0.5, 0.5], ["-2%", "2%"]);
-  const bgY = useTransform(smoothY, [-0.5, 0.5], ["-2%", "2%"]);
+  const bgX   = useTransform(smoothX, [-0.5, 0.5], ["-2%", "2%"]);
+  const bgY   = useTransform(smoothY, [-0.5, 0.5], ["-2%", "2%"]);
   const textX = useTransform(smoothX, [-0.5, 0.5], ["20px", "-20px"]);
   const textY = useTransform(smoothY, [-0.5, 0.5], ["20px", "-20px"]);
 
@@ -235,59 +346,104 @@ const Index = () => {
   };
 
   return (
-    <main className="relative bg-background">
+    <main className="relative magma-bg text-foreground overflow-hidden">
+      
+      <style>{`
+        @keyframes magmaBreath {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 50% 100%; }
+        }
+        .magma-bg {
+          background-color: transparent;
+          /* TONED DOWN MAGMA GLOW: Softer, moody, cinematic */
+          background-image: 
+            radial-gradient(circle at 15% 50%, rgba(255, 60, 0, 0.25), transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(200, 20, 0, 0.35), transparent 50%),
+            radial-gradient(circle at 50% 80%, rgba(255, 100, 0, 0.2), transparent 60%);
+          background-attachment: fixed;
+          background-size: 200% 200%;
+          animation: magmaBreath 12s ease-in-out infinite alternate;
+        }
+      `}</style>
+
       {/* 1. HERO SECTION */}
-      <section 
-        ref={heroRef} 
+      <section
+        ref={heroRef}
         onMouseMove={handleHeroMouseMove}
         className="relative h-screen overflow-hidden flex items-center justify-center perspective-1000"
       >
-        {/* Intro Vortex Overlay (Stays on top for 3s) */}
         <AnimatePresence>
           {!isIntroComplete && (
-            <HeroSandVortex onComplete={() => setIsIntroComplete(true)} />
+            <HeroVignetteBurn onComplete={() => setIsIntroComplete(true)} />
           )}
         </AnimatePresence>
 
-        {/* Hero Content Background (Always here, but behind the vortex) */}
-        <motion.div 
-          className="absolute inset-[-5%] z-0" 
-          style={{ y: heroY, x: bgX, y: bgY }}
-        >
-          <img src={heroImg} alt="736 A.D. interior" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-background/60" />
+        <motion.div className="absolute inset-[-5%] z-0" style={{ y: heroY, x: bgX }}>
+          <img src={heroImg} alt="The Litup Cafe interior" className="w-full h-full object-cover" />
+          {/* THE GOLDILOCKS TINT: Dark edges, 40% dark center. Moody but visible. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0402]/90 via-[#0a0402]/40 to-[#0a0402] opacity-95" />
         </motion.div>
 
-        {/* Hero Content Text (Always on top of the image, below the vortex) */}
         <div className="text-center px-4 relative z-10 w-full h-full flex flex-col justify-center items-center pointer-events-auto">
           <motion.div style={{ x: textX, y: textY }}>
-            <motion.h1 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: "easeOut" }} className="font-serif text-6xl sm:text-7xl md:text-9xl font-bold text-shimmer tracking-wider">736 A.D.</motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 0.8 }} className="mt-4 text-foreground/80 text-lg md:text-xl tracking-[0.25em] uppercase font-light"><TypewriterText text="Old Charm. New Age Flair." /></motion.p>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.6 }} className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <MagneticButton to="/menu" className="btn-gold px-8 py-3 rounded text-sm tracking-widest uppercase font-semibold">Explore Menu</MagneticButton>
-              <MagneticButton href="tel:+918010000249" className="px-8 py-3 rounded border border-primary/40 text-primary text-sm tracking-widest uppercase font-semibold hover:bg-primary/10 transition-colors"><Phone className="w-4 h-4" />Call to Reserve</MagneticButton>
+            <motion.h1
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              /* Softened drop shadow to match the elegant vibe */
+              className="font-serif text-6xl sm:text-7xl md:text-9xl font-bold text-shimmer tracking-wider drop-shadow-[0_0_15px_rgba(255,90,0,0.5)]"
+            >
+              LITUP
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="mt-4 text-foreground/90 text-lg md:text-xl tracking-[0.25em] uppercase font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+            >
+              <TypewriterText text="Good Vibes. Great Food. Lit Up." />
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
+              className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+            >
+              <MagneticButton to="/menu" className="btn-gold px-8 py-3 rounded text-sm tracking-widest uppercase font-semibold">
+                Explore Menu
+              </MagneticButton>
+              <MagneticButton href="tel:+917982488464" className="px-8 py-3 rounded border border-primary/60 text-primary text-sm tracking-widest uppercase font-semibold hover:bg-primary hover:text-black transition-colors bg-[#0a0402]/60 backdrop-blur-sm shadow-[0_0_15px_rgba(255,90,0,0.3)]">
+                <Phone className="w-4 h-4" />Call to Reserve
+              </MagneticButton>
             </motion.div>
           </motion.div>
         </div>
 
-        <motion.div animate={{ y: [0, 12, 0] }} transition={{ repeat: Infinity, duration: 1.8 }} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary/60 z-20"><ChevronDown className="w-6 h-6" /></motion.div>
+        <motion.div animate={{ y: [0, 12, 0] }} transition={{ repeat: Infinity, duration: 1.8 }} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary/80 z-20 drop-shadow-[0_0_10px_rgba(255,90,0,0.8)]">
+          <ChevronDown className="w-8 h-8" />
+        </motion.div>
       </section>
 
-      {/* --- WHY 736 A.D. --- */}
+      {/* --- KINETIC MARQUEE INCORPORATED HERE --- */}
+      <GlowingMarquee />
+
+      {/* --- WHY LITUP CAFE --- */}
       <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
-          <SectionReveal><PremiumHeading title="Why 736 A.D.?" /></SectionReveal>
+          <SectionReveal><PremiumHeading title="Why Litup Cafe?" /></SectionReveal>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat, i) => (
               <SectionReveal key={i} delay={i * 0.1}>
-                <div className="bg-card border border-primary/10 rounded p-6 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-500 hover:border-primary/40 hover:shadow-[0_8px_30px_-5px_rgba(212,175,55,0.2)]">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent -translate-x-[150%] skew-x-[30deg] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out pointer-events-none" />
+                <SpotlightCard className="bg-[#0a0402]/60 backdrop-blur-md border border-primary/20 rounded-xl p-6 text-center h-full hover:border-primary/50 transition-colors duration-500 shadow-lg">
                   <div className="relative z-10 flex flex-col items-center">
-                    <stat.icon className="w-8 h-8 text-primary mx-auto mb-4 group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(212,175,55,0.6)] transition-all duration-500" />
-                    <div className="group-hover:drop-shadow-[0_0_12px_rgba(212,175,55,0.4)] transition-all duration-500"><Counter {...stat} /></div>
-                    <p className="text-muted-foreground text-xs tracking-widest uppercase mt-3 group-hover:text-primary/80 transition-colors duration-500">{stat.label}</p>
+                    <stat.icon className="w-8 h-8 text-primary mx-auto mb-4 group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(255,90,0,0.8)] transition-all duration-500" />
+                    <div className="group-hover:drop-shadow-[0_0_12px_rgba(255,90,0,0.6)] transition-all duration-500">
+                      <Counter {...stat} />
+                    </div>
+                    <p className="text-muted-foreground text-xs tracking-widest uppercase mt-3 group-hover:text-primary/90 transition-colors duration-500">{stat.label}</p>
                   </div>
-                </div>
+                </SpotlightCard>
               </SectionReveal>
             ))}
           </div>
@@ -301,20 +457,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {experiences.map((exp, i) => (
               <SectionReveal key={i} delay={i * 0.15}>
-                <div className="relative group rounded-md h-80 md:h-96 cursor-pointer overflow-hidden shadow-lg shadow-black/40">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                    <div className="w-[200%] h-[200%] animate-spin bg-[conic-gradient(from_0deg,transparent_0%,transparent_75%,rgba(212,175,55,1)_100%)]" style={{ animationDuration: '2.5s' }} />
-                  </div>
-                  <div className="absolute inset-[2px] rounded bg-background overflow-hidden z-10">
-                    <img src={exp.img} alt={exp.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 mix-blend-overlay transition-colors duration-500" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <h3 className="font-serif text-2xl text-primary mb-2 group-hover:text-white transition-colors duration-300 drop-shadow-md">{exp.title}</h3>
-                      <p className="text-foreground/90 text-sm leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">{exp.desc}</p>
-                    </div>
-                  </div>
-                </div>
+                <TiltCard exp={exp} />
               </SectionReveal>
             ))}
           </div>
@@ -322,28 +465,28 @@ const Index = () => {
       </section>
 
       {/* --- GUESTS SAY --- */}
-      <section className="py-24 px-4 bg-background">
+      <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <SectionReveal><PremiumHeading title="What Our Guests Say" /></SectionReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {reviews.map((review, i) => (
               <SectionReveal key={i} delay={i * 0.15}>
-                <div className="bg-card border border-primary/20 rounded p-8 relative transition-all duration-500 h-full flex flex-col group hover:-translate-y-2 hover:border-primary/40 hover:shadow-[0_12px_40px_-10px_rgba(212,175,55,0.2)] overflow-hidden">
-                  <div className="absolute bottom-0 left-0 w-full h-0 bg-gradient-to-t from-primary/15 via-primary/5 to-transparent transition-all duration-700 ease-out group-hover:h-2/3 pointer-events-none z-0" />
+                <SpotlightCard className="bg-[#0a0402]/60 backdrop-blur-md border border-primary/20 rounded-xl p-8 relative transition-all duration-500 h-full flex flex-col hover:border-primary/50 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:-translate-y-2">
+                  <div className="absolute bottom-0 left-0 w-full h-0 bg-gradient-to-t from-primary/20 via-primary/5 to-transparent transition-all duration-700 ease-out group-hover:h-2/3 pointer-events-none z-0" />
                   <div className="relative z-10 flex flex-col h-full">
                     <div className="flex gap-1 mb-6">
                       {[...Array(review.rating)].map((_, idx) => (
                         <Star key={idx} className="w-5 h-5 text-primary fill-primary group-hover:scale-110 transition-transform duration-300" style={{ transitionDelay: `${idx * 50}ms` }} />
                       ))}
                     </div>
-                    <p className="text-foreground/80 text-sm md:text-base leading-relaxed italic mb-8 flex-grow group-hover:text-foreground transition-colors duration-300">"{review.text}"</p>
-                    <div className="flex items-center justify-between border-t border-primary/10 pt-6 mt-auto relative">
-                      <div className="absolute top-[-1px] left-0 w-0 h-[1px] bg-primary transition-all duration-700 group-hover:w-full" />
+                    <p className="text-foreground/90 text-sm md:text-base leading-relaxed italic mb-8 flex-grow group-hover:text-white transition-colors duration-300">"{review.text}"</p>
+                    <div className="flex items-center justify-between border-t border-primary/20 pt-6 mt-auto relative">
+                      <div className="absolute top-[-1px] left-0 w-0 h-[1px] bg-primary transition-all duration-700 group-hover:w-full shadow-[0_0_10px_rgba(255,90,0,1)]" />
                       <span className="font-serif text-primary text-lg tracking-wide">{review.author}</span>
                       <span className="text-xs text-muted-foreground uppercase tracking-widest">{review.date}</span>
                     </div>
                   </div>
-                </div>
+                </SpotlightCard>
               </SectionReveal>
             ))}
           </div>
@@ -351,26 +494,54 @@ const Index = () => {
       </section>
 
       {/* --- FIND US --- */}
-      <section className="py-24 px-4 bg-background border-t border-border/40">
+      <section className="py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <SectionReveal><PremiumHeading title="Find Us" /></SectionReveal>
           <div className="flex flex-col md:flex-row gap-12 items-center justify-center">
             <SectionReveal delay={0.1} className="w-full md:w-1/2 flex justify-center md:justify-end">
-              <div className="w-full max-w-sm aspect-square rounded-lg overflow-hidden border-2 border-primary/20 hover:border-primary/50 transition-colors duration-500 shadow-xl shadow-black/20">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.8369014643044!2d77.2039635!3d28.6945251!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd3b9353747f%3A0x3c9180eadc67e204!2s736%20A.D.%20Culinary%20Bar!5e0!3m2!1sen!2sin!4v1773471690389!5m2!1sen!2sin" className="w-full h-full" style={{ border: 0 }} allowFullScreen={true} loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="736 A.D. Location"></iframe>
+              <div className="w-full max-w-sm aspect-square rounded-xl overflow-hidden border border-primary/30 hover:border-primary/60 transition-colors duration-500 shadow-[0_0_30px_rgba(255,90,0,0.15)]">
+                <iframe
+                  src="https://maps.google.com/maps?q=The+Litup+Cafe,+Plot+No.+2516,+2nd+Floor,+Hudson+Lane,+GTB+Nagar,+Delhi+110009&output=embed"
+                  className="w-full h-full"
+                  style={{ border: 0, filter: "grayscale(0.8) contrast(1.2)" }}
+                  allowFullScreen={true}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="The Litup Cafe Location"
+                />
               </div>
             </SectionReveal>
-            <SectionReveal delay={0.2} className="w-full md:w-1/2 flex flex-col gap-8 justify-center items-center md:items-start text-foreground/80">
-              <a href="https://www.google.com/maps/place/736+A.D.+Culinary+Bar/@28.6942977,77.2035745,17z/data=!4m6!3m5!1s0x390cfd3b9353747f:0x3c9180eadc67e204!8m2!3d28.6945251!4d77.2039635!16s%2Fg%2F11j27jsgzg?entry=ttu&g_ep=EgoyMDI2MDMxMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 hover:text-primary transition-colors duration-300 group text-left">
-                <MapPin className="w-6 h-6 text-primary mt-1 group-hover:scale-110 transition-transform duration-300 flex-shrink-0" />
-                <div><h3 className="font-serif text-xl text-primary mb-2">Location</h3><p className="max-w-xs leading-relaxed">736 A.D. Culinary Bar<br />Thekedaar Surjeet Singh Marg, Block G,<br />Vijay Nagar, Delhi, 110033</p></div>
+            <SectionReveal delay={0.2} className="w-full md:w-1/2 flex flex-col gap-8 justify-center items-center md:items-start text-foreground/90">
+              <a href="https://maps.app.goo.gl/njeAnprbvRjrBVoz9" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 hover:text-primary transition-colors duration-300 group text-left">
+                <MapPin className="w-6 h-6 text-primary mt-1 group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-transform duration-300 flex-shrink-0" />
+                <div>
+                  <h3 className="font-serif text-xl text-primary mb-2">Location</h3>
+                  <p className="max-w-xs leading-relaxed group-hover:text-white transition-colors">
+                    The Litup Cafe & Lounge<br />
+                    F-21, 2nd Floor, Opp. NDPL Office,<br />
+                    Hudson Lane, GTB Nagar, Delhi – 110009
+                  </p>
+                </div>
               </a>
-              <a href="tel:08010000249" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group"><Phone className="w-6 h-6 text-primary group-hover:scale-110 transition-transform duration-300 flex-shrink-0" /><div><h3 className="font-serif text-xl text-primary mb-1">Reservations</h3><p className="tracking-widest">08010000249</p></div></a>
-              <a href="https://www.instagram.com/736adcafe/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group"><Instagram className="w-6 h-6 text-primary group-hover:scale-110 transition-transform duration-300 flex-shrink-0" /><div><h3 className="font-serif text-xl text-primary mb-1">Follow Us</h3><p className="tracking-widest">@736adcafe</p></div></a>
+              <a href="tel:+917982488464" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group">
+                <Phone className="w-6 h-6 text-primary group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-transform duration-300 flex-shrink-0" />
+                <div>
+                  <h3 className="font-serif text-xl text-primary mb-1">Reservations</h3>
+                  <p className="tracking-widest group-hover:text-white transition-colors">+91 79824 88464</p>
+                </div>
+              </a>
+              <a href="https://www.instagram.com/the_lit_up_cafe/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group">
+                <Instagram className="w-6 h-6 text-primary group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-transform duration-300 flex-shrink-0" />
+                <div>
+                  <h3 className="font-serif text-xl text-primary mb-1">Follow Us</h3>
+                  <p className="tracking-widest group-hover:text-white transition-colors">@the_lit_up_cafe</p>
+                </div>
+              </a>
             </SectionReveal>
           </div>
         </div>
       </section>
+
     </main>
   );
 };

@@ -4,39 +4,50 @@
 
 @layer base {
   :root {
-    --background: 0 0% 3%;
-    --foreground: 41 55% 85%;
-    --card: 0 0% 6%;
-    --card-foreground: 41 55% 85%;
-    --popover: 0 0% 6%;
-    --popover-foreground: 41 55% 85%;
-    --primary: 44 53% 54%;
-    --primary-foreground: 0 0% 3%;
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 41 55% 85%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 41 20% 55%;
-    --accent: 0 70% 21%;
-    --accent-foreground: 41 55% 85%;
+    /* --- LITUP MAGMA TYPOGRAPHY & COLOR PALETTE --- */
+    --background: 12 70% 4%; 
+    --foreground: 35 40% 92%; 
+    --card: 14 65% 6%;
+    --card-foreground: 35 40% 92%;
+    --popover: 14 65% 6%;
+    --popover-foreground: 35 40% 92%;
+    
+    /* The main glowing fire accent */
+    --primary: 18 95% 55%; 
+    --primary-foreground: 12 70% 4%;
+    
+    --secondary: 15 80% 12%; 
+    --secondary-foreground: 35 40% 92%;
+    
+    --muted: 15 60% 10%;
+    --muted-foreground: 20 20% 65%; 
+    
+    --accent: 25 95% 55%; 
+    --accent-foreground: 12 70% 4%;
+    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 44 20% 18%;
-    --input: 0 0% 14%;
-    --ring: 44 53% 54%;
+    --border: 15 70% 15%; 
+    --input: 15 60% 8%;
+    --ring: 18 95% 55%;
     --radius: 0.25rem;
-    --gold: 44 53% 54%;
-    --gold-light: 45 86% 69%;
-    --gold-dark: 43 40% 40%;
-    --maroon: 0 70% 21%;
-    --parchment: 41 55% 85%;
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 41 55% 85%;
-    --sidebar-primary: 44 53% 54%;
-    --sidebar-primary-foreground: 0 0% 3%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 41 55% 85%;
-    --sidebar-border: 44 20% 18%;
-    --sidebar-ring: 44 53% 54%;
+    
+    /* Adjusted custom vars */
+    --gold: 25 95% 55%;
+    --gold-light: 45 100% 70%;
+    --gold-dark: 10 85% 35%;
+    --maroon: 10 85% 25%;
+    --parchment: 35 40% 92%;
+    
+    /* Sidebar matching the magma vibe */
+    --sidebar-background: 12 70% 4%;
+    --sidebar-foreground: 35 40% 92%;
+    --sidebar-primary: 18 95% 55%;
+    --sidebar-primary-foreground: 12 70% 4%;
+    --sidebar-accent: 15 80% 12%;
+    --sidebar-accent-foreground: 35 40% 92%;
+    --sidebar-border: 15 70% 15%;
+    --sidebar-ring: 18 95% 55%;
   }
 }
 
@@ -45,44 +56,55 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     font-family: 'Montserrat', sans-serif;
     cursor: none;
+
+    /* --- THE UNMISSABLE MAGMA BACKGROUND --- */
+    background-color: #0a0402;
+    background-image: 
+      radial-gradient(circle at 20% 40%, rgba(255, 90, 0, 0.25), transparent 55%),
+      radial-gradient(circle at 80% 60%, rgba(204, 30, 0, 0.3), transparent 55%),
+      radial-gradient(circle at 50% 90%, rgba(255, 120, 0, 0.15), transparent 65%);
+    background-attachment: fixed;
+    background-size: 200% 200%;
+    animation: magmaBreath 12s ease-in-out infinite alternate;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', serif;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: hsl(0 0% 3%);
-}
-::-webkit-scrollbar-thumb {
-  background: hsl(44 53% 54% / 0.4);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(44 53% 54% / 0.7);
+/* Global Magma Breath Animation */
+@keyframes magmaBreath {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 50% 100%; }
 }
 
-/* Gold shimmer animation */
+/* Custom scrollbar - Updated to fiery tones */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: hsl(12 70% 4%); }
+::-webkit-scrollbar-thumb { background: hsl(18 95% 55% / 0.5); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(18 95% 55% / 0.8); }
+
+/* Shimmer animation */
 @keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
 
+/* Flowing, burning heat text */
 .text-shimmer {
   background: linear-gradient(
     90deg,
-    hsl(44 53% 54%) 0%,
-    hsl(45 86% 69%) 25%,
-    hsl(44 53% 54%) 50%,
-    hsl(45 86% 69%) 75%,
-    hsl(44 53% 54%) 100%
+    hsl(10 85% 35%)  0%,   
+    hsl(18 95% 55%)  18%,  
+    hsl(25 95% 55%)  36%,  
+    hsl(45 100% 70%) 50%,  
+    hsl(25 95% 55%)  64%,  
+    hsl(18 95% 55%)  82%,  
+    hsl(10 85% 35%) 100%   
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -93,16 +115,19 @@
 
 /* Button shimmer sweep */
 @keyframes btn-shimmer {
-  0% { left: -100%; }
-  100% { left: 200%; }
+  0%   { left: -100%; }
+  100% { left:  200%; }
 }
 
+/* Premium magma button */
 .btn-gold {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, hsl(44 53% 54%), hsl(43 40% 40%));
-  color: hsl(0 0% 3%);
+  background: linear-gradient(135deg, hsl(25 95% 55%), hsl(15 90% 40%));
+  color: hsl(35 40% 92%); 
   font-weight: 600;
+  box-shadow: 0 4px 15px rgba(255, 90, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .btn-gold::after {
   content: '';
@@ -111,41 +136,38 @@
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, hsl(45 86% 69% / 0.4), transparent);
+  background: linear-gradient(90deg, transparent, hsl(45 100% 70% / 0.4), transparent);
   transition: none;
 }
 .btn-gold:hover::after {
   animation: btn-shimmer 0.6s ease-out;
 }
+.btn-gold:hover {
+  box-shadow: 0 6px 20px rgba(255, 90, 0, 0.4);
+}
 
-/* Grain overlay */
+/* FIXED: Premium Volcanic Rock Texture */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  /* Boosted opacity so it's actually visible */
+  opacity: 0.20; 
+  /* Changed from color-burn to overlay so it shows on dark backgrounds */
+  mix-blend-mode: overlay; 
+  /* Standard, high-contrast fractal noise SVG */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   background-repeat: repeat;
-  background-size: 256px 256px;
 }
 
 /* Marquee */
 @keyframes marquee {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.marquee-track {
-  animation: marquee 20s linear infinite;
-}
+.marquee-track { animation: marquee 20s linear infinite; }
 
-/* Custom cursor styles - override on mobile */
-@media (pointer: coarse) {
-  body { cursor: auto; }
-}
+@media (pointer: coarse) { body { cursor: auto; } }
 
-/* Typewriter */
-@keyframes blink-caret {
-  50% { border-color: transparent; }
-}
+@keyframes blink-caret { 50% { border-color: transparent; } }
