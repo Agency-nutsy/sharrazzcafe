@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import { Utensils, Sparkles, Users, MapPin, Clock } from "lucide-react";
 import { MouseEvent } from "react";
@@ -103,6 +103,11 @@ const ScrollHourglass = ({ progress }: { progress: any }) => {
 };
 
 const About = () => {
+  // --- ADDED THIS TO FORCE SCROLL TO TOP ON LOAD/REFRESH ---
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(heroScroll, [0, 1], [0, 200]);
@@ -154,11 +159,7 @@ const About = () => {
       {/* --- 1. THE HERO TITLE --- */}
       <section ref={heroRef} className="relative h-[70vh] flex flex-col items-center justify-center overflow-hidden">
         <motion.div className="absolute inset-[-5%] -z-10" style={{ y: heroY }}>
-          {/* FIXED: Removed grayscale to make the colors vibrant, not dull. */}
           <img src={img5} alt="The Litup Cafe interior" className="w-full h-full object-cover grayscale-0" />
-          {/* THE GOLDILOCKS TINT: Reduced base opacities from 90% to 70% at edges, 
-              and center opacity from 40% to only 10% to make the image clear 
-              and illuminated. Overall div opacity also reduced to 70% to prevent dullness. */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0402]/70 via-[#0a0402]/10 to-[#0a0402] opacity-70" />
         </motion.div>
 
