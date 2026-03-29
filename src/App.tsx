@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
 import CustomCursor from "@/components/CustomCursor";
 import GrainOverlay from "@/components/GrainOverlay";
+import FloatingWidgets from "@/components/FloatingWidgets"; // 🔥 ADDED WIDGETS IMPORT
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Menu from "./pages/Menu";
@@ -74,12 +75,20 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         {loading && <LoadingScreen onComplete={handleLoadComplete} />}
-        <BrowserRouter>
+        {/* ADDED FUTURE FLAGS HERE TO SILENCE REACT ROUTER WARNINGS */}
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           {/* Injected right here so it tracks routes perfectly */}
           <ScrollToTop />
           <CustomCursor />
           <GrainOverlay />
           <Navbar />
+          {/* 🔥 ADDED WIDGETS HERE SO THEY FLOAT GLOBALLY */}
+          <FloatingWidgets /> 
           <AnimatedRoutes />
         </BrowserRouter>
       </TooltipProvider>
@@ -88,4 +97,3 @@ const App = () => {
 };
 
 export default App;
-

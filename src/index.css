@@ -171,3 +171,30 @@
 @media (pointer: coarse) { body { cursor: auto; } }
 
 @keyframes blink-caret { 50% { border-color: transparent; } }
+
+/* =========================================
+   MOBILE OPTIMIZATIONS (120 FPS SAVER) 
+   ========================================= */
+@media (max-width: 768px) {
+  /* 1. Simplify the Body Background */
+  body {
+    /* 'fixed' causes severe scrolling lag on iOS/Android. Change to scroll. */
+    background-attachment: scroll !important; 
+    
+    /* Stop the heavy CPU repaint animation. The gradient will still look great, it just won't shift. */
+    animation: none !important; 
+  }
+
+  /* 2. Kill the Grain Overlay on Mobile */
+  .grain-overlay {
+    /* mix-blend-mode over the whole screen is a GPU killer on phones. We hide it entirely. */
+    display: none !important; 
+  }
+
+  /* 3. Disable Text Shimmer Animation on Mobile */
+  .text-shimmer {
+    /* Stops the background-position animation on text to save battery and frames */
+    animation: none !important;
+    background-position: 0% center !important;
+  }
+}

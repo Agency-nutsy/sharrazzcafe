@@ -1,20 +1,34 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Wine, UtensilsCrossed } from "lucide-react";
 import SectionReveal from "@/components/SectionReveal";
 import { menuData } from "@/data/menuData";
 
+// ── CUSTOM HOOK: DETECT MOBILE FOR PERFORMANCE ────────────────
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  return isMobile;
+};
+
 // --- THE EMBER SHATTER TRANSITION PARTICLES ---
-const ShatterParticles = () => {
+const ShatterParticles = ({ isMobile }: { isMobile: boolean }) => {
   const particles = useMemo(() => {
-    return Array.from({ length: 40 }).map((_, i) => ({
+    // ⚡ MOBILE OPTIMIZATION: Render fewer particles on phones to prevent lag/stutter
+    const count = isMobile ? 15 : 40; 
+    return Array.from({ length: count }).map((_, i) => ({
       id: i,
-      x: (Math.random() - 0.5) * 400,
-      y: (Math.random() - 0.5) * 400,
+      x: (Math.random() - 0.5) * (isMobile ? 250 : 400),
+      y: (Math.random() - 0.5) * (isMobile ? 250 : 400),
       size: Math.random() * 3 + 1,
       duration: 0.4 + Math.random() * 0.4,
     }));
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-50">
@@ -37,6 +51,9 @@ const Menu = () => {
   const [activeTab, setActiveTab] = useState(menuData[0].tab);
   const activeSection = menuData.find((s) => s.tab === activeTab);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  const isMobile = useIsMobile();
+  const menuHeaderRef = useRef<HTMLElement>(null);
 
   // Handle the shatter transition timing
   const handleTabChange = (newTab: string) => {
@@ -44,17 +61,20 @@ const Menu = () => {
     setIsTransitioning(true);
     setActiveTab(newTab);
     
-    // Scrolls the user smoothly up to right below the header so they see the new items instantly
-    window.scrollTo({ top: 320, behavior: "smooth" });
+    // ⚡ MOBILE OPTIMIZATION: Dynamic scroll instead of hardcoded 320px
+    if (menuHeaderRef.current) {
+      const yOffset = isMobile ? 80 : 120; // Accounts for sticky header height
+      const y = menuHeaderRef.current.getBoundingClientRect().top + window.scrollY - yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
     
     setTimeout(() => setIsTransitioning(false), 600); // Matches particle animation
   };
 
   return (
-    /* FIXED: Removed overflow-hidden so the sticky tabs can function perfectly */
     <main className="pt-32 pb-24 relative magma-bg text-foreground min-h-screen">
       
-      {/* MAGMA ANIMATION CSS */}
+      {/* MAGMA ANIMATION CSS & MOBILE SCROLLBAR HIDER */}
       <style>{`
         @keyframes magmaBreath {
           0% { background-position: 0% 50%; }
@@ -71,6 +91,9 @@ const Menu = () => {
           background-size: 200% 200%;
           animation: magmaBreath 12s ease-in-out infinite alternate;
         }
+        /* Hides horizontal scrollbar for mobile tabs while keeping them swipeable */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
       {/* Isolated Background Ambient Glow */}
@@ -79,7 +102,7 @@ const Menu = () => {
       </div>
 
       {/* Header */}
-      <section className="px-4 text-center mb-8 relative z-10">
+      <section ref={menuHeaderRef} className="px-4 text-center mb-8 relative z-10">
         <SectionReveal>
           <motion.div
             initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
@@ -94,18 +117,18 @@ const Menu = () => {
       </section>
 
       {/* --- FIXED STICKY CRYSTAL CAPSULE TABS --- */}
-      {/* Set to top-20 so it docks perfectly under your scrolling navbar without overlapping */}
       <section className="sticky top-20 z-[90] px-4 py-4 mb-12 pointer-events-none">
         <div className="max-w-4xl mx-auto flex justify-center pointer-events-auto">
-          {/* Dark magma glassmorphism */}
-          <div className="flex flex-wrap justify-center gap-2 p-2 bg-[#0a0402]/80 backdrop-blur-xl rounded-full border border-primary/20 shadow-[0_20px_40px_rgba(0,0,0,0.8)]">
+          
+          {/* ⚡ MOBILE OPTIMIZATION: flex-nowrap and overflow-x-auto on mobile creates a smooth swipeable row instead of a giant clunky block */}
+          <div className="flex flex-nowrap md:flex-wrap overflow-x-auto hide-scrollbar snap-x snap-mandatory gap-2 p-2 bg-[#0a0402]/80 backdrop-blur-xl md:rounded-full rounded-2xl border border-primary/20 shadow-[0_20px_40px_rgba(0,0,0,0.8)] w-full max-w-full">
             {menuData.map((section) => {
               const isActive = activeTab === section.tab;
               return (
                 <button
                   key={section.tab}
                   onClick={() => handleTabChange(section.tab)}
-                  className={`relative px-6 py-3 rounded-full text-xs tracking-[0.2em] uppercase font-bold transition-all duration-500 overflow-hidden ${
+                  className={`relative shrink-0 snap-start px-6 py-3 rounded-full text-xs tracking-[0.2em] uppercase font-bold transition-all duration-500 overflow-hidden ${
                     isActive ? "text-[#0a0402]" : "text-foreground/60 hover:text-primary"
                   }`}
                 >
@@ -130,6 +153,7 @@ const Menu = () => {
               );
             })}
           </div>
+
         </div>
       </section>
 
@@ -138,7 +162,7 @@ const Menu = () => {
         <div className="max-w-5xl mx-auto relative">
           
           {/* Render Particles when changing tabs */}
-          {isTransitioning && <ShatterParticles />}
+          {isTransitioning && <ShatterParticles isMobile={isMobile} />}
 
           <AnimatePresence mode="wait">
             <motion.div

@@ -1,10 +1,22 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useMotionTemplate, useSpring } from "framer-motion";
 import { Utensils, Sparkles, Users, MapPin, Clock } from "lucide-react";
 import { MouseEvent } from "react";
 import SectionReveal from "@/components/SectionReveal";
 import img5 from "@/assets/litup about 1.png";
 import img6 from "@/assets/litup about 2.png";
+
+// ── CUSTOM HOOK: DETECT MOBILE ────────────────
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  return isMobile;
+};
 
 const pillars = [
   { icon: Utensils, title: "The Food", desc: "A 100% pure veg menu spanning pizzas, pastas, shakes, momos, and combos — flavourful, filling, and priced for everyone." },
@@ -15,23 +27,28 @@ const pillars = [
 // --- 1. THE SMOLDERING SCROLL TEXT ---
 const SmolderingText = ({ children }: { children: string }) => {
   const textRef = useRef<HTMLParagraphElement>(null);
+  const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll({
     target: textRef,
-    offset: ["start 85%", "end 60%"] // Controls when the text "ignites"
+    offset: ["start 85%", "end 60%"] 
   });
 
   const words = children.split(" ");
   
   return (
-    <p ref={textRef} className="text-xl md:text-2xl font-light leading-relaxed mb-10 flex flex-wrap gap-x-[0.3em]">
+    <p ref={textRef} className="relative text-xl md:text-2xl font-light leading-relaxed mb-10 flex flex-wrap gap-x-[0.3em]">
       {words.map((word, i) => {
         const start = i / words.length;
         const end = start + (1 / words.length);
-        const opacity = useTransform(scrollYProgress, [start, end], [0.15, 1]); // From ash to fire
-        const color = useTransform(scrollYProgress, [start, end], ["#3a2015", "#fdf6e3"]); // Ash brown to Pale Embers
+        const opacity = useTransform(scrollYProgress, [start, end], [0.15, 1]); 
+        const color = useTransform(scrollYProgress, [start, end], ["#3a2015", "#fdf6e3"]); 
         
         return (
-          <motion.span key={i} style={{ opacity, color }} className="transition-colors duration-300">
+          <motion.span 
+            key={i} 
+            style={isMobile ? { opacity: 1, color: "#fdf6e3" } : { opacity, color }} 
+            className="transition-colors duration-300"
+          >
             {word}
           </motion.span>
         );
@@ -45,8 +62,6 @@ const LanternCard = ({ pillar, delay }: { pillar: any; delay: number }) => {
   return (
     <SectionReveal delay={delay}>
       <div className="group relative p-10 bg-[#0a0402]/60 backdrop-blur-md hover:bg-[#0a0402]/90 transition-all duration-700 rounded-xl overflow-hidden h-full flex flex-col items-center text-center shadow-lg hover:-translate-y-2 cursor-pointer">
-        
-        {/* The Liquid Flame SVG Border */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
           <rect 
             x="0" y="0" width="100%" height="100%" rx="12" ry="12" 
@@ -57,7 +72,6 @@ const LanternCard = ({ pillar, delay }: { pillar: any; delay: number }) => {
           />
         </svg>
 
-        {/* Ambient background glow inside the card */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
         <div className="relative z-10 flex flex-col items-center">
@@ -103,31 +117,35 @@ const ScrollHourglass = ({ progress }: { progress: any }) => {
 };
 
 const About = () => {
-  // --- ADDED THIS TO FORCE SCROLL TO TOP ON LOAD/REFRESH ---
+  const isMobile = useIsMobile();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const heroRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(heroScroll, [0, 1], [0, 200]);
+  const desktopHeroY = useTransform(heroScroll, [0, 1], [0, 200]);
+  const heroY = isMobile ? 0 : desktopHeroY; 
 
-  const breakRef = useRef<HTMLDivElement>(null);
+  const breakRef = useRef<HTMLElement>(null);
   const { scrollYProgress: breakScroll } = useScroll({ target: breakRef, offset: ["start end", "end start"] });
-  const breakY = useTransform(breakScroll, [0, 1], ["-20%", "20%"]);
-  const breakScale = useTransform(breakScroll, [0, 1], [1.1, 1]);
+  const desktopBreakY = useTransform(breakScroll, [0, 1], ["-20%", "20%"]);
+  const desktopBreakScale = useTransform(breakScroll, [0, 1], [1.1, 1]);
+  const breakY = isMobile ? 0 : desktopBreakY; 
+  const breakScale = isMobile ? 1 : desktopBreakScale; 
 
-  const storyRef = useRef<HTMLDivElement>(null);
+  const storyRef = useRef<HTMLElement>(null);
   const { scrollYProgress: storyScroll } = useScroll({
     target: storyRef,
     offset: ["start center", "end center"]
   });
 
-  // --- 3. OBSIDIAN-TO-FIRE MOUSE TRACKING FOR PARALLAX IMAGE ---
   const mouseX = useSpring(0, { stiffness: 500, damping: 100 });
   const mouseY = useSpring(0, { stiffness: 500, damping: 100 });
   
   function handleImageMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
+    if (isMobile) return; 
     const { left, top } = currentTarget.getBoundingClientRect();
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
@@ -137,7 +155,6 @@ const About = () => {
   return (
     <main className="relative magma-bg text-foreground min-h-screen overflow-hidden">
       
-      {/* MAGMA ANIMATION CSS: Perfectly synced with the Home Page */}
       <style>{`
         @keyframes magmaBreath {
           0% { background-position: 0% 50%; }
@@ -158,9 +175,12 @@ const About = () => {
 
       {/* --- 1. THE HERO TITLE --- */}
       <section ref={heroRef} className="relative h-[70vh] flex flex-col items-center justify-center overflow-hidden">
-        <motion.div className="absolute inset-[-5%] -z-10" style={{ y: heroY }}>
-          <img src={img5} alt="The Litup Cafe interior" className="w-full h-full object-cover grayscale-0" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0402]/70 via-[#0a0402]/10 to-[#0a0402] opacity-70" />
+        
+        {/* 🔥 FOOLPROOF PARALLAX FIX IS RIGHT HERE 🔥 */}
+        {/* Notice the absolute positioning stretches way beyond the section limits (-top-[300px] and -bottom-[300px]) */}
+        <motion.div className="absolute inset-x-0 -top-[300px] -bottom-[300px] -z-10 bg-black" style={{ y: heroY }}>
+          <img src={img5} alt="The Litup Cafe interior" className="w-full h-full object-cover opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#0a0402]" />
         </motion.div>
 
         <div className="text-center z-10 px-4 mt-20">
@@ -190,7 +210,6 @@ const About = () => {
       <section ref={storyRef} className="max-w-7xl mx-auto px-6 md:px-12 py-32 relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8">
 
-          {/* Sticky Left Column */}
           <div className="md:col-span-5 relative">
             <div className="sticky top-40 flex items-start gap-6">
               <div className="hidden md:block">
@@ -210,7 +229,6 @@ const About = () => {
             </div>
           </div>
 
-          {/* Scrolling Right Column (Using the Smoldering Text Reveal) */}
           <div className="md:col-span-7 md:pl-12 md:border-l border-primary/10 pt-12 md:pt-0">
             <SmolderingText>
               Nestled on the iconic Hudson Lane in GTB Nagar, The Litup Cafe & Lounge was born from a simple idea — create a place where students, friends, and families could come together over great food without burning a hole in their pocket.
@@ -257,14 +275,12 @@ const About = () => {
           className="absolute inset-[-10%] w-[120%] h-[120%]"
           style={{ y: breakY, scale: breakScale }}
         >
-          {/* Base Desaturated Image */}
           <img src={img6} alt="Litup Cafe Ambiance" className="w-full h-full object-cover grayscale-[0.8] brightness-[0.4] contrast-125" />
           
-          {/* Full Color Image revealed by mouse hover */}
           <motion.img 
             src={img6} alt="Litup Cafe Ambiance Highlight" 
             className="absolute inset-0 w-full h-full object-cover saturate-[1.2]" 
-            style={{ WebkitMaskImage: obsidianMask, maskImage: obsidianMask }}
+            style={isMobile ? {} : { WebkitMaskImage: obsidianMask, maskImage: obsidianMask }}
           />
 
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402] via-[#0a0402]/30 to-[#0a0402] pointer-events-none" />

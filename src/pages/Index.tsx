@@ -8,13 +8,44 @@ import img2 from "@/assets/litup home 1.png";
 import img3 from "@/assets/litup home 2.png";
 import img4 from "@/assets/litup home 3.png";
 
+// ── CUSTOM HOOK: DETECT MOBILE ────────────────
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  return isMobile;
+};
+
 // ── VIGNETTE BURN HERO INTRO ────────────────
 const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
   const divRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const el = divRef.current;
     if (!el) return;
+
+    if (isMobile) {
+      el.style.background = "rgb(4,2,1)";
+      el.style.transition = "opacity 1.5s ease-in-out";
+      
+      const timer1 = setTimeout(() => {
+        el.style.opacity = "0";
+      }, 500);
+      
+      const timer2 = setTimeout(() => {
+        onComplete();
+      }, 2000);
+      
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
 
     const W = window.innerWidth;
     const H = window.innerHeight;
@@ -69,7 +100,7 @@ const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
     el.style.opacity    = "1";
     rafId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId);
-  }, [onComplete]);
+  }, [onComplete, isMobile]);
 
   return (
     <div
@@ -84,9 +115,10 @@ const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
 const MagneticButton = ({ children, to, href, className }: any) => {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 0, y: 0 });
+  const isMobile = useIsMobile();
 
   const handleMouseMove = (e: any) => {
-    if (!ref.current) return;
+    if (!ref.current || isMobile) return; 
     const { clientX, clientY } = e;
     const { width, height, left, top } = ref.current.getBoundingClientRect();
     const x = clientX - (left + width / 2);
@@ -119,8 +151,12 @@ const MagneticButton = ({ children, to, href, className }: any) => {
 const SpotlightCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const isMobile = useIsMobile();
+
+  const spotlightBackground = useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(255, 90, 0, 0.20), transparent 80%)`;
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    if (isMobile) return; 
     const { left, top } = currentTarget.getBoundingClientRect();
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
@@ -131,13 +167,12 @@ const SpotlightCard = ({ children, className = "" }: { children: React.ReactNode
       className={`group relative overflow-hidden ${className}`}
       onMouseMove={handleMouseMove}
     >
-      <motion.div
-        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-500 group-hover:opacity-100 z-0"
-        style={{
-          /* Toned down spotlight to 0.20 for a smoother glow */
-          background: useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(255, 90, 0, 0.20), transparent 80%)`,
-        }}
-      />
+      {!isMobile && (
+        <motion.div
+          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-500 group-hover:opacity-100 z-0"
+          style={{ background: spotlightBackground }}
+        />
+      )}
       <div className="relative z-10 h-full w-full">
         {children}
       </div>
@@ -149,12 +184,15 @@ const SpotlightCard = ({ children, className = "" }: { children: React.ReactNode
 const TiltCard = ({ exp }: { exp: any }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  const isMobile = useIsMobile();
+  
   const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
   const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile) return; 
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -174,7 +212,7 @@ const TiltCard = ({ exp }: { exp: any }) => {
   return (
     <div style={{ perspective: 1000 }} className="relative h-80 md:h-96">
       <motion.div
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        style={{ rotateX: isMobile ? 0 : rotateX, rotateY: isMobile ? 0 : rotateY, transformStyle: "preserve-3d" }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         className="absolute inset-0 group cursor-pointer overflow-visible rounded-xl shadow-2xl border border-primary/10 hover:border-primary/40 transition-colors duration-500"
@@ -184,7 +222,7 @@ const TiltCard = ({ exp }: { exp: any }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402] via-[#0a0402]/30 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
           <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 mix-blend-overlay transition-colors duration-500" />
         </div>
-        <div className="absolute bottom-0 left-0 right-0 p-6 z-20 pointer-events-none" style={{ transform: "translateZ(60px)" }}>
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-20 pointer-events-none" style={{ transform: isMobile ? "none" : "translateZ(60px)" }}>
           <h3 className="font-serif text-2xl text-primary mb-2 drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">{exp.title}</h3>
           <p className="text-foreground/90 text-sm leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 drop-shadow-[0_0_5px_rgba(0,0,0,0.8)]">{exp.desc}</p>
         </div>
@@ -242,9 +280,9 @@ const Counter = ({ end, isDecimal, isYear, isText, suffix }: any) => {
     return () => obs.disconnect();
   }, []);
 
-  if (isText) return <span ref={ref} className="font-serif text-3xl md:text-4xl text-primary">✓</span>;
+  if (isText) return <span ref={ref} className="relative font-serif text-3xl md:text-4xl text-primary">✓</span>;
   return (
-    <span ref={ref} className="font-serif text-3xl md:text-4xl text-primary">
+    <span ref={ref} className="relative font-serif text-3xl md:text-4xl text-primary">
       {isYear ? Math.floor(count) : isDecimal ? count.toFixed(1) : Math.floor(count)}
       {suffix || ""}
     </span>
@@ -273,7 +311,7 @@ const TypewriterText = ({ text }: { text: string }) => {
     return () => clearInterval(timer);
   }, [started, text]);
 
-  return <span ref={ref} className="inline-block">{displayed}<span className="border-r-2 border-primary ml-1 animate-pulse" /></span>;
+  return <span ref={ref} className="relative inline-block">{displayed}<span className="border-r-2 border-primary ml-1 animate-pulse" /></span>;
 };
 
 const PremiumHeading = ({ title }: { title: string }) => {
@@ -281,18 +319,17 @@ const PremiumHeading = ({ title }: { title: string }) => {
   const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0.1 } } };
   const child = { hidden: { opacity: 0, y: 30, filter: "blur(8px)" }, visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.8, ease: "easeOut" } } };
   return (
-    <div className="text-center mb-16">
+    <div className="relative text-center mb-16">
       <motion.h2
         variants={container}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
-        className="font-serif text-3xl md:text-5xl tracking-wider flex justify-center flex-wrap relative"
+        className="relative font-serif text-3xl md:text-5xl tracking-wider flex justify-center flex-wrap"
       >
         {letters.map((letter, index) => (
           <motion.span key={index} variants={child} className={`${letter === " " ? "w-3" : ""} inline-block`}>
             <span
-              // Deepened the shadow and color gradient for an ultra-premium, dark-hot iron look
               className="bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(200,30,0,0.6)]"
               style={{
                 backgroundImage: "linear-gradient(110deg, #8a1c00 0%, #ff4500 25%, #cc2900 50%, #ff4500 75%, #8a1c00 100%)",
@@ -324,8 +361,12 @@ const reviews = [
 
 const Index = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  
+  const desktopHeroY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const heroY = isMobile ? 0 : desktopHeroY;
 
   const [isIntroComplete, setIsIntroComplete] = useState(false);
 
@@ -340,6 +381,7 @@ const Index = () => {
   const textY = useTransform(smoothY, [-0.5, 0.5], ["20px", "-20px"]);
 
   const handleHeroMouseMove = (e: React.MouseEvent) => {
+    if (isMobile) return; 
     const { clientX, clientY } = e;
     mouseX.set(clientX / window.innerWidth - 0.5);
     mouseY.set(clientY / window.innerHeight - 0.5);
@@ -356,7 +398,6 @@ const Index = () => {
         }
         .magma-bg {
           background-color: transparent;
-          /* TONED DOWN MAGMA GLOW: Softer, moody, cinematic */
           background-image: 
             radial-gradient(circle at 15% 50%, rgba(255, 60, 0, 0.25), transparent 50%),
             radial-gradient(circle at 85% 30%, rgba(200, 20, 0, 0.35), transparent 50%),
@@ -379,19 +420,17 @@ const Index = () => {
           )}
         </AnimatePresence>
 
-        <motion.div className="absolute inset-[-5%] z-0" style={{ y: heroY, x: bgX }}>
+        <motion.div className="absolute inset-[-5%] z-0" style={{ y: heroY, x: isMobile ? 0 : bgX }}>
           <img src={heroImg} alt="The Litup Cafe interior" className="w-full h-full object-cover" />
-          {/* THE GOLDILOCKS TINT: Dark edges, 40% dark center. Moody but visible. */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0402]/90 via-[#0a0402]/40 to-[#0a0402] opacity-95" />
         </motion.div>
 
         <div className="text-center px-4 relative z-10 w-full h-full flex flex-col justify-center items-center pointer-events-auto">
-          <motion.div style={{ x: textX, y: textY }}>
+          <motion.div style={{ x: isMobile ? 0 : textX, y: isMobile ? 0 : textY }}>
             <motion.h1
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
-              /* Softened drop shadow to match the elegant vibe */
               className="font-serif text-6xl sm:text-7xl md:text-9xl font-bold text-shimmer tracking-wider drop-shadow-[0_0_15px_rgba(255,90,0,0.5)]"
             >
               LITUP
@@ -425,11 +464,10 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* --- KINETIC MARQUEE INCORPORATED HERE --- */}
       <GlowingMarquee />
 
       {/* --- WHY LITUP CAFE --- */}
-      <section className="py-24 px-4">
+      <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <SectionReveal><PremiumHeading title="Why Litup Cafe?" /></SectionReveal>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -451,7 +489,7 @@ const Index = () => {
       </section>
 
       {/* --- SIGNATURE EXPERIENCES --- */}
-      <section className="py-24 px-4">
+      <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <SectionReveal><PremiumHeading title="Signature Experiences" /></SectionReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -465,7 +503,7 @@ const Index = () => {
       </section>
 
       {/* --- GUESTS SAY --- */}
-      <section className="py-24 px-4">
+      <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <SectionReveal><PremiumHeading title="What Our Guests Say" /></SectionReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -494,7 +532,7 @@ const Index = () => {
       </section>
 
       {/* --- FIND US --- */}
-      <section className="py-24 px-4">
+      <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
           <SectionReveal><PremiumHeading title="Find Us" /></SectionReveal>
           <div className="flex flex-col md:flex-row gap-12 items-center justify-center">

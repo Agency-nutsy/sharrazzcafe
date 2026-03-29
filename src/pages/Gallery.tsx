@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { createPortal } from "react-dom"; // 🔥 ADDED THIS: To teleport the lightbox
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionReveal from "@/components/SectionReveal";
@@ -229,7 +230,6 @@ const Gallery = () => {
   }, [lightbox]);
 
   return (
-    /* INJECTED MAGMA BG DIRECTLY INTO MAIN WRAPPER */
     <main className="pt-32 magma-bg text-foreground min-h-screen relative overflow-hidden">
       
       {/* MAGMA ANIMATION CSS */}
@@ -273,7 +273,7 @@ const Gallery = () => {
         </SectionReveal>
       </section>
 
-      {/* Obsidian Masonry Grid */}
+      {/* Clear, Bright Masonry Grid */}
       <section className="px-4 pb-24 relative z-10">
         <div className="max-w-7xl mx-auto columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
           {allImages.map((src, i) => (
@@ -282,21 +282,19 @@ const Gallery = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                // Added a glowing orange shadow on hover to match the theme
-                className="group relative overflow-hidden rounded-xl break-inside-avoid cursor-pointer bg-[#0a0402]/80 border border-primary/10 shadow-lg hover:shadow-[0_0_20px_rgba(255,90,0,0.3)] transition-all duration-500"
+                className="group relative overflow-hidden rounded-xl break-inside-avoid cursor-pointer bg-[#0a0402] border border-primary/10 shadow-lg hover:shadow-[0_0_20px_rgba(255,90,0,0.3)] transition-all duration-500"
                 onClick={() => setLightbox(i)}
               >
-                {/* THE OBSIDIAN FILTER */}
                 <img
                   src={src}
                   alt={`Litup Cafe gallery ${i + 1}`}
-                  className="w-full object-cover transition-all duration-700 ease-out grayscale-[0.6] brightness-[0.6] contrast-[1.2] group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-110"
+                  className="w-full object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
                   loading="lazy"
                 />
                 
                 {/* Interactive Glowing Ember Border & Overlay */}
-                <div className="absolute inset-0 border border-transparent group-hover:border-primary/40 transition-colors duration-500 rounded-xl z-10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402]/90 via-transparent to-transparent opacity-60 group-hover:opacity-0 transition-opacity duration-500" />
+                <div className="absolute inset-0 border border-transparent group-hover:border-primary/40 transition-colors duration-500 rounded-xl z-10 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402]/60 via-transparent to-transparent opacity-30 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none" />
               </motion.div>
             </SectionReveal>
           ))}
@@ -308,69 +306,75 @@ const Gallery = () => {
          <EmberChronicleCarousel />
       </section>
 
-      {/* --- PREMIUM LIGHTBOX --- */}
-      <AnimatePresence>
-        {lightbox !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#0a0402]/98 backdrop-blur-2xl flex flex-col items-center justify-center"
-            onClick={() => setLightbox(null)}
-          >
-            {/* Top Bar with Close Button */}
-            <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
-              <span className="font-serif text-primary tracking-[0.3em] text-xs uppercase font-bold drop-shadow-[0_0_8px_rgba(255,90,0,0.5)]">
-                LITUP CAFE ARCHIVES
-              </span>
+      {/* 🔥 THE FIX: PORTAL RENDERING FOR THE LIGHTBOX 🔥 */}
+      {/* This teleports the lightbox completely out of your page structure so it perfectly overlays the screen, no matter your scroll position */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {lightbox !== null && (
+            <motion.div
+              key="lightbox-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              // z-[9999] guarantees it sits on top of absolute everything (navbars, etc.)
+              className="fixed inset-0 z-[9999] bg-[#0a0402]/98 backdrop-blur-2xl flex flex-col items-center justify-center"
+              onClick={() => setLightbox(null)}
+            >
+              {/* Top Bar with Close Button */}
+              <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
+                <span className="font-serif text-primary tracking-[0.3em] text-xs uppercase font-bold drop-shadow-[0_0_8px_rgba(255,90,0,0.5)]">
+                  LITUP CAFE ARCHIVES
+                </span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
+                  className="text-white/50 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-2 hover:rotate-90 transform"
+                >
+                  <X className="w-8 h-8" />
+                </button>
+              </div>
+
+              {/* Navigation Arrows */}
               <button
-                onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
-                className="text-white/50 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-2 hover:rotate-90 transform"
+                onClick={(e) => { e.stopPropagation(); navigateLightbox(-1); }}
+                className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-4 z-50 hover:-translate-x-2 transform"
               >
-                <X className="w-8 h-8" />
+                <ChevronLeft className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1} />
               </button>
-            </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); navigateLightbox(1); }}
+                className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-4 z-50 hover:translate-x-2 transform"
+              >
+                <ChevronRight className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1} />
+              </button>
 
-            {/* Navigation Arrows */}
-            <button
-              onClick={(e) => { e.stopPropagation(); navigateLightbox(-1); }}
-              className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-4 z-50 hover:-translate-x-2 transform"
-            >
-              <ChevronLeft className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1} />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); navigateLightbox(1); }}
-              className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-4 z-50 hover:translate-x-2 transform"
-            >
-              <ChevronRight className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1} />
-            </button>
+              {/* The Image */}
+              <div className="relative w-full max-w-6xl h-full flex items-center justify-center p-4 md:p-12">
+                <motion.img
+                  key={lightbox}
+                  initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  src={allImages[lightbox]}
+                  alt={`Litup Cafe Gallery ${lightbox + 1}`}
+                  className="max-w-full max-h-full object-contain rounded-sm shadow-[0_0_50px_rgba(255,90,0,0.15)]"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
 
-            {/* The Image */}
-            <div className="relative w-full max-w-6xl h-full flex items-center justify-center p-4 md:p-12">
-              <motion.img
-                key={lightbox}
-                initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                src={allImages[lightbox]}
-                alt={`Litup Cafe Gallery ${lightbox + 1}`}
-                className="max-w-full max-h-full object-contain rounded-sm shadow-[0_0_50px_rgba(255,90,0,0.15)]"
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-
-            {/* Bottom Counter */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
-              <span className="font-serif text-primary tracking-[0.4em] text-sm flex items-center gap-3 drop-shadow-[0_0_8px_rgba(255,90,0,0.5)]">
-                {String(lightbox + 1).padStart(2, '0')}
-                <span className="w-8 h-[1px] bg-primary/40 shadow-[0_0_5px_rgba(255,90,0,0.5)]" />
-                {String(allImages.length).padStart(2, '0')}
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {/* Bottom Counter */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
+                <span className="font-serif text-primary tracking-[0.4em] text-sm flex items-center gap-3 drop-shadow-[0_0_8px_rgba(255,90,0,0.5)]">
+                  {String(lightbox + 1).padStart(2, '0')}
+                  <span className="w-8 h-[1px] bg-primary/40 shadow-[0_0_5px_rgba(255,90,0,0.5)]" />
+                  {String(allImages.length).padStart(2, '0')}
+                </span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
     </main>
   );
