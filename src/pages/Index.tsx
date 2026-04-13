@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePres
 import { Phone, ChevronDown, Calendar, Armchair, Star, MapPin, Instagram, Clock } from "lucide-react";
 import SectionReveal from "@/components/SectionReveal";
 // Note: You can rename these imports to point to your Sharrazz assets later
-import heroImg from "@/assets/litup hero.png"; 
+import heroImg from "@/assets/hero image (2).png"; 
 import img2 from "@/assets/litup home 1.png";
 import img3 from "@/assets/litup home 2.png";
 import img4 from "@/assets/litup home 3.png";
