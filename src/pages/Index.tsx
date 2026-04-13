@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence, useMotionTemplate } from "framer-motion";
-import { Phone, ChevronDown, Calendar, Armchair, Star, MapPin, Instagram, Utensils } from "lucide-react";
+import { Phone, ChevronDown, Calendar, Armchair, Star, MapPin, Instagram, Clock } from "lucide-react";
 import SectionReveal from "@/components/SectionReveal";
-import heroImg from "@/assets/litup hero.png";
+// Note: You can rename these imports to point to your Sharrazz assets later
+import heroImg from "@/assets/litup hero.png"; 
 import img2 from "@/assets/litup home 1.png";
 import img3 from "@/assets/litup home 2.png";
 import img4 from "@/assets/litup home 3.png";
@@ -20,7 +21,7 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-// ── VIGNETTE BURN HERO INTRO ────────────────
+// ── VIGNETTE BURN HERO INTRO (PINK THEME) ────────────────
 const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -30,7 +31,7 @@ const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
     if (!el) return;
 
     if (isMobile) {
-      el.style.background = "rgb(4,2,1)";
+      el.style.background = "rgb(15, 5, 10)";
       el.style.transition = "opacity 1.5s ease-in-out";
       
       const timer1 = setTimeout(() => {
@@ -80,12 +81,13 @@ const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
       const r3 = r + 65;
       const r4 = r + 130;
 
+      // Pink/Rose vignette burst
       el.style.background = `radial-gradient(circle at 50% 50%,
         transparent ${r0}px,
-        rgba(255,245,180,${0.95 * g}) ${r1}px,
-        rgba(255,90,0,${0.80 * g})   ${r2}px,
-        rgba(120,20,0,${0.55 * g})   ${r3}px,
-        rgba(4,2,1,1)                ${r4}px
+        rgba(255,220,240,${0.95 * g}) ${r1}px,
+        rgba(255,20,147,${0.80 * g})   ${r2}px,
+        rgba(139,0,139,${0.55 * g})   ${r3}px,
+        rgba(15,5,10,1)                ${r4}px
       )`;
 
       if (elapsed >= FADE_START) {
@@ -96,7 +98,7 @@ const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
       rafId = requestAnimationFrame(animate);
     };
 
-    el.style.background = "rgb(4,2,1)";
+    el.style.background = "rgb(15,5,10)";
     el.style.opacity    = "1";
     rafId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId);
@@ -106,7 +108,7 @@ const HeroVignetteBurn = ({ onComplete }: { onComplete: () => void }) => {
     <div
       ref={divRef}
       className="absolute inset-0 z-[50] pointer-events-none"
-      style={{ background: "rgb(4,2,1)", opacity: 1 }}
+      style={{ background: "rgb(15,5,10)", opacity: 1 }}
     />
   );
 };
@@ -147,13 +149,14 @@ const MagneticButton = ({ children, to, href, className }: any) => {
   return to ? <Link to={to} className="inline-block">{innerContent}</Link> : <a href={href} className="inline-block">{innerContent}</a>;
 };
 
-// ── EMBER SPOTLIGHT CARD COMPONENT ────────────────
+// ── GLOW SPOTLIGHT CARD COMPONENT ────────────────
 const SpotlightCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const isMobile = useIsMobile();
 
-  const spotlightBackground = useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(255, 90, 0, 0.20), transparent 80%)`;
+  // Pink spotlight
+  const spotlightBackground = useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(255, 105, 180, 0.15), transparent 80%)`;
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     if (isMobile) return; 
@@ -217,9 +220,9 @@ const TiltCard = ({ exp }: { exp: any }) => {
         onMouseLeave={handleMouseLeave}
         className="absolute inset-0 group cursor-pointer overflow-visible rounded-xl shadow-2xl border border-primary/10 hover:border-primary/40 transition-colors duration-500"
       >
-        <div className="absolute inset-0 rounded-xl bg-[#0a0402] overflow-hidden z-10">
+        <div className="absolute inset-0 rounded-xl bg-[#0f050a] overflow-hidden z-10">
           <img src={exp.img} alt={exp.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" loading="lazy" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402] via-[#0a0402]/30 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f050a] via-[#0f050a]/30 to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
           <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 mix-blend-overlay transition-colors duration-500" />
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-6 z-20 pointer-events-none" style={{ transform: isMobile ? "none" : "translateZ(60px)" }}>
@@ -234,12 +237,12 @@ const TiltCard = ({ exp }: { exp: any }) => {
 // ── GLOWING KINETIC MARQUEE ────────────────
 const GlowingMarquee = () => {
   return (
-    <div className="relative w-full overflow-hidden py-6 bg-[#0a0402]/80 border-y border-primary/20 flex group z-20 shadow-[0_0_30px_rgba(255,90,0,0.1)] backdrop-blur-sm">
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0a0402] via-transparent to-[#0a0402] z-10 pointer-events-none" />
+    <div className="relative w-full overflow-hidden py-6 bg-[#0f050a]/80 border-y border-primary/20 flex group z-20 shadow-[0_0_30px_rgba(255,105,180,0.1)] backdrop-blur-sm">
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0f050a] via-transparent to-[#0f050a] z-10 pointer-events-none" />
       <div className="flex whitespace-nowrap animate-marquee">
         {[...Array(4)].map((_, i) => (
-          <span key={i} className="text-3xl md:text-5xl font-serif text-transparent font-bold tracking-[0.15em] mx-6 transition-all duration-500 group-hover:text-primary cursor-default" style={{ WebkitTextStroke: "1px rgba(255,90,0,0.4)" }}>
-            ✦ PREMIUM LOUNGE ✦ WOODFIRED PIZZAS ✦ SIGNATURE SHAKES ✦ PURE VEG 
+          <span key={i} className="text-3xl md:text-5xl font-serif text-transparent font-bold tracking-[0.15em] mx-6 transition-all duration-500 group-hover:text-primary cursor-default" style={{ WebkitTextStroke: "1px rgba(255,105,180,0.5)" }}>
+            ✦ ROOFTOP DINING ✦ LATE NIGHT HANGOUT ✦ CONTINENTAL & MEXICAN ✦ AESTHETIC VIBES 
           </span>
         ))}
       </div>
@@ -249,13 +252,13 @@ const GlowingMarquee = () => {
 };
 
 const stats = [
-  { icon: Calendar, label: "Est.", end: 2017, prefix: "", isYear: true },
-  { icon: Armchair, label: "Seats", end: 60, prefix: "", suffix: "+" },
-  { icon: Star, label: "Rated", end: 3.8, prefix: "", suffix: "★", isDecimal: true },
-  { icon: Utensils, label: "Pure Veg Menu", end: 0, prefix: "", isText: true },
+  { icon: Armchair, label: "Seating Setup", end: 80, prefix: "", suffix: "+" },
+  { icon: Clock, label: "Late Night Open", end: 3, prefix: "Till ", suffix: " AM", isTime: true },
+  { icon: Star, label: "Google Rated", end: 4.4, prefix: "", suffix: "★", isDecimal: true },
+  { icon: Calendar, label: "Open Everyday", end: 0, prefix: "", isText: true },
 ];
 
-const Counter = ({ end, isDecimal, isYear, isText, suffix }: any) => {
+const Counter = ({ end, isDecimal, isTime, isText, suffix, prefix }: any) => {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const [started, setStarted] = useState(false);
@@ -275,15 +278,27 @@ const Counter = ({ end, isDecimal, isYear, isText, suffix }: any) => {
   }, [started, end, isText]);
 
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.5 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+        }
+      },
+      { threshold: 0.1 } // FIXED: Low threshold so it triggers the moment it appears
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
   if (isText) return <span ref={ref} className="relative font-serif text-3xl md:text-4xl text-primary">✓</span>;
   return (
     <span ref={ref} className="relative font-serif text-3xl md:text-4xl text-primary">
-      {isYear ? Math.floor(count) : isDecimal ? count.toFixed(1) : Math.floor(count)}
+      {prefix || ""}
+      {isTime ? Math.floor(count) : isDecimal ? count.toFixed(1) : Math.floor(count)}
       {suffix || ""}
     </span>
   );
@@ -295,7 +310,7 @@ const TypewriterText = ({ text }: { text: string }) => {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.5 });
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.1 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, []);
@@ -330,11 +345,11 @@ const PremiumHeading = ({ title }: { title: string }) => {
         {letters.map((letter, index) => (
           <motion.span key={index} variants={child} className={`${letter === " " ? "w-3" : ""} inline-block`}>
             <span
-              className="bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(200,30,0,0.6)]"
+              className="bg-clip-text text-transparent drop-shadow-[0_2px_15px_rgba(255,20,147,0.6)]"
               style={{
-                backgroundImage: "linear-gradient(110deg, #8a1c00 0%, #ff4500 25%, #cc2900 50%, #ff4500 75%, #8a1c00 100%)",
+                backgroundImage: "linear-gradient(110deg, #8a0054 0%, #ff1493 25%, #cc0066 50%, #ff1493 75%, #8a0054 100%)",
                 backgroundSize: "200% auto",
-                animation: "emberFlow 4s linear infinite",
+                animation: "auraFlow 4s linear infinite",
               }}
             >
               {letter}
@@ -342,21 +357,21 @@ const PremiumHeading = ({ title }: { title: string }) => {
           </motion.span>
         ))}
       </motion.h2>
-      <style>{`@keyframes emberFlow { to { background-position: 200% center; } }`}</style>
+      <style>{`@keyframes auraFlow { to { background-position: 200% center; } }`}</style>
     </div>
   );
 };
 
 const experiences = [
-  { title: "Cozy Lounge Ambiance", desc: "Settle into our 2nd floor lounge on Hudson Lane — the perfect escape from the busy street below.", img: img2 },
-  { title: "Party & Group Events", desc: "Celebrate birthdays and special occasions with personalized setups and a dedicated reservations team.", img: img3 },
-  { title: "Signature Shakes & Drinks", desc: "From Cold Coffee to Kitkat Shakes — every sip on our menu is crafted to light up your day.", img: img4 },
+  { title: "Aesthetic Rooftop Dining", desc: "Relax under the open sky with light music and the perfect vibe for your evening out or a cozy date.", img: img2 },
+  { title: "Perfect for College Hangouts", desc: "Located right opposite Venky College, making it the ultimate and pocket-friendly spot to catch up with friends.", img: img3 },
+  { title: "Late Night Cravings Sorted", desc: "Open till 3:00 AM! Satisfy those midnight cravings with our delicious pastas, pizzas, and signature shakes.", img: img4 },
 ];
 
 const reviews = [
-  { author: "Priya Mehta", text: "The ambiance on the 2nd floor is super cozy and the staff is incredibly warm. Had the Cold Coffee and Oreo Shake — both were amazing. Easily my go-to spot on Hudson Lane!", rating: 5, date: "2 weeks ago" },
-  { author: "Aman Verma", text: "Ordered the Farmfresh Pizza and Cheese Fries — absolute value for money. The place has a great vibe and the service is quick and friendly. Will definitely come back!", rating: 5, date: "1 month ago" },
-  { author: "Sneha Kapoor", text: "Perfect hangout spot near GTB Nagar! The Kitkat Shake is honestly addictive and the Cheese Chilly is a must-try. The lounge setting makes it great for groups too.", rating: 5, date: "3 weeks ago" },
+  { author: "Priya M.", text: "Nice ambience, polite staff, pocket-friendly, and good food quality. Best place to spend quality time with friends.", rating: 5, date: "Google Review" },
+  { author: "Rohan S.", text: "Great combos, great taste, and aesthetic ambience. The rooftop feel is amazing in the evenings.", rating: 5, date: "Google Review" },
+  { author: "Sneha K.", text: "Pretty ambience, a must-try cafe at an affordable price... the food is delicious! Definitely coming back.", rating: 5, date: "Google Review" },
 ];
 
 const Index = () => {
@@ -388,23 +403,23 @@ const Index = () => {
   };
 
   return (
-    <main className="relative magma-bg text-foreground overflow-hidden">
+    <main className="relative aura-bg text-foreground overflow-hidden">
       
       <style>{`
-        @keyframes magmaBreath {
+        @keyframes auraBreath {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 50% 100%; }
         }
-        .magma-bg {
+        .aura-bg {
           background-color: transparent;
           background-image: 
-            radial-gradient(circle at 15% 50%, rgba(255, 60, 0, 0.25), transparent 50%),
-            radial-gradient(circle at 85% 30%, rgba(200, 20, 0, 0.35), transparent 50%),
-            radial-gradient(circle at 50% 80%, rgba(255, 100, 0, 0.2), transparent 60%);
+            radial-gradient(circle at 15% 50%, rgba(255, 20, 147, 0.20), transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(219, 112, 147, 0.25), transparent 50%),
+            radial-gradient(circle at 50% 80%, rgba(255, 105, 180, 0.15), transparent 60%);
           background-attachment: fixed;
           background-size: 200% 200%;
-          animation: magmaBreath 12s ease-in-out infinite alternate;
+          animation: auraBreath 12s ease-in-out infinite alternate;
         }
       `}</style>
 
@@ -421,8 +436,8 @@ const Index = () => {
         </AnimatePresence>
 
         <motion.div className="absolute inset-[-5%] z-0" style={{ y: heroY, x: isMobile ? 0 : bgX }}>
-          <img src={heroImg} alt="The Litup Cafe interior" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0402]/90 via-[#0a0402]/40 to-[#0a0402] opacity-95" />
+          <img src={heroImg} alt="Sharrazz Cafe interior" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0f050a]/90 via-[#0f050a]/40 to-[#0f050a] opacity-95" />
         </motion.div>
 
         <div className="text-center px-4 relative z-10 w-full h-full flex flex-col justify-center items-center pointer-events-auto">
@@ -431,9 +446,9 @@ const Index = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className="font-serif text-6xl sm:text-7xl md:text-9xl font-bold text-shimmer tracking-wider drop-shadow-[0_0_15px_rgba(255,90,0,0.5)]"
+              className="font-serif text-5xl sm:text-7xl md:text-9xl font-bold text-shimmer tracking-wider drop-shadow-[0_0_15px_rgba(255,105,180,0.5)]"
             >
-              LITUP
+              SHARRAZZ
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -441,7 +456,7 @@ const Index = () => {
               transition={{ delay: 0.6, duration: 0.8 }}
               className="mt-4 text-foreground/90 text-lg md:text-xl tracking-[0.25em] uppercase font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
             >
-              <TypewriterText text="Good Vibes. Great Food. Lit Up." />
+              <TypewriterText text="Rooftop Dining. Great Vibes." />
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -452,31 +467,31 @@ const Index = () => {
               <MagneticButton to="/menu" className="btn-gold px-8 py-3 rounded text-sm tracking-widest uppercase font-semibold">
                 Explore Menu
               </MagneticButton>
-              <MagneticButton href="tel:+917982488464" className="px-8 py-3 rounded border border-primary/60 text-primary text-sm tracking-widest uppercase font-semibold hover:bg-primary hover:text-black transition-colors bg-[#0a0402]/60 backdrop-blur-sm shadow-[0_0_15px_rgba(255,90,0,0.3)]">
+              <MagneticButton href="tel:+919899282709" className="px-8 py-3 rounded border border-primary/60 text-primary text-sm tracking-widest uppercase font-semibold hover:bg-primary hover:text-black transition-colors bg-[#0f050a]/60 backdrop-blur-sm shadow-[0_0_15px_rgba(255,105,180,0.3)]">
                 <Phone className="w-4 h-4" />Call to Reserve
               </MagneticButton>
             </motion.div>
           </motion.div>
         </div>
 
-        <motion.div animate={{ y: [0, 12, 0] }} transition={{ repeat: Infinity, duration: 1.8 }} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary/80 z-20 drop-shadow-[0_0_10px_rgba(255,90,0,0.8)]">
+        <motion.div animate={{ y: [0, 12, 0] }} transition={{ repeat: Infinity, duration: 1.8 }} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary/80 z-20 drop-shadow-[0_0_10px_rgba(255,105,180,0.8)]">
           <ChevronDown className="w-8 h-8" />
         </motion.div>
       </section>
 
       <GlowingMarquee />
 
-      {/* --- WHY LITUP CAFE --- */}
+      {/* --- WHY SHARRAZZ CAFE --- */}
       <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
-          <SectionReveal><PremiumHeading title="Why Litup Cafe?" /></SectionReveal>
+          <SectionReveal><PremiumHeading title="Why Sharrazz Cafe?" /></SectionReveal>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat, i) => (
               <SectionReveal key={i} delay={i * 0.1}>
-                <SpotlightCard className="bg-[#0a0402]/60 backdrop-blur-md border border-primary/20 rounded-xl p-6 text-center h-full hover:border-primary/50 transition-colors duration-500 shadow-lg">
+                <SpotlightCard className="bg-[#0f050a]/60 backdrop-blur-md border border-primary/20 rounded-xl p-6 text-center h-full hover:border-primary/50 transition-colors duration-500 shadow-lg">
                   <div className="relative z-10 flex flex-col items-center">
-                    <stat.icon className="w-8 h-8 text-primary mx-auto mb-4 group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(255,90,0,0.8)] transition-all duration-500" />
-                    <div className="group-hover:drop-shadow-[0_0_12px_rgba(255,90,0,0.6)] transition-all duration-500">
+                    <stat.icon className="w-8 h-8 text-primary mx-auto mb-4 group-hover:scale-110 group-hover:drop-shadow-[0_0_15px_rgba(255,105,180,0.8)] transition-all duration-500" />
+                    <div className="group-hover:drop-shadow-[0_0_12px_rgba(255,105,180,0.6)] transition-all duration-500">
                       <Counter {...stat} />
                     </div>
                     <p className="text-muted-foreground text-xs tracking-widest uppercase mt-3 group-hover:text-primary/90 transition-colors duration-500">{stat.label}</p>
@@ -491,7 +506,7 @@ const Index = () => {
       {/* --- SIGNATURE EXPERIENCES --- */}
       <section className="relative py-24 px-4">
         <div className="max-w-6xl mx-auto">
-          <SectionReveal><PremiumHeading title="Signature Experiences" /></SectionReveal>
+          <SectionReveal><PremiumHeading title="The Experience" /></SectionReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {experiences.map((exp, i) => (
               <SectionReveal key={i} delay={i * 0.15}>
@@ -509,7 +524,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {reviews.map((review, i) => (
               <SectionReveal key={i} delay={i * 0.15}>
-                <SpotlightCard className="bg-[#0a0402]/60 backdrop-blur-md border border-primary/20 rounded-xl p-8 relative transition-all duration-500 h-full flex flex-col hover:border-primary/50 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:-translate-y-2">
+                <SpotlightCard className="bg-[#0f050a]/60 backdrop-blur-md border border-primary/20 rounded-xl p-8 relative transition-all duration-500 h-full flex flex-col hover:border-primary/50 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:-translate-y-2">
                   <div className="absolute bottom-0 left-0 w-full h-0 bg-gradient-to-t from-primary/20 via-primary/5 to-transparent transition-all duration-700 ease-out group-hover:h-2/3 pointer-events-none z-0" />
                   <div className="relative z-10 flex flex-col h-full">
                     <div className="flex gap-1 mb-6">
@@ -519,7 +534,7 @@ const Index = () => {
                     </div>
                     <p className="text-foreground/90 text-sm md:text-base leading-relaxed italic mb-8 flex-grow group-hover:text-white transition-colors duration-300">"{review.text}"</p>
                     <div className="flex items-center justify-between border-t border-primary/20 pt-6 mt-auto relative">
-                      <div className="absolute top-[-1px] left-0 w-0 h-[1px] bg-primary transition-all duration-700 group-hover:w-full shadow-[0_0_10px_rgba(255,90,0,1)]" />
+                      <div className="absolute top-[-1px] left-0 w-0 h-[1px] bg-primary transition-all duration-700 group-hover:w-full shadow-[0_0_10px_rgba(255,105,180,1)]" />
                       <span className="font-serif text-primary text-lg tracking-wide">{review.author}</span>
                       <span className="text-xs text-muted-foreground uppercase tracking-widest">{review.date}</span>
                     </div>
@@ -537,42 +552,43 @@ const Index = () => {
           <SectionReveal><PremiumHeading title="Find Us" /></SectionReveal>
           <div className="flex flex-col md:flex-row gap-12 items-center justify-center">
             <SectionReveal delay={0.1} className="w-full md:w-1/2 flex justify-center md:justify-end">
-              <div className="w-full max-w-sm aspect-square rounded-xl overflow-hidden border border-primary/30 hover:border-primary/60 transition-colors duration-500 shadow-[0_0_30px_rgba(255,90,0,0.15)]">
+              <div className="w-full max-w-sm aspect-square rounded-xl overflow-hidden border border-primary/30 hover:border-primary/60 transition-colors duration-500 shadow-[0_0_30px_rgba(255,105,180,0.15)]">
                 <iframe
-                  src="https://maps.google.com/maps?q=The+Litup+Cafe,+Plot+No.+2516,+2nd+Floor,+Hudson+Lane,+GTB+Nagar,+Delhi+110009&output=embed"
+                  src="https://maps.google.com/maps?q=Sharrazz+Cafe+Satya+Niketan&t=&z=15&ie=UTF8&iwloc=&output=embed"
                   className="w-full h-full"
-                  style={{ border: 0, filter: "grayscale(0.8) contrast(1.2)" }}
+                  style={{ border: 0, filter: "grayscale(0.5) contrast(1.1)" }}
                   allowFullScreen={true}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="The Litup Cafe Location"
+                  title="Sharrazz Cafe Location"
                 />
               </div>
             </SectionReveal>
             <SectionReveal delay={0.2} className="w-full md:w-1/2 flex flex-col gap-8 justify-center items-center md:items-start text-foreground/90">
-              <a href="https://maps.app.goo.gl/njeAnprbvRjrBVoz9" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 hover:text-primary transition-colors duration-300 group text-left">
-                <MapPin className="w-6 h-6 text-primary mt-1 group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-transform duration-300 flex-shrink-0" />
+              <a href="https://maps.google.com/?q=Sharrazz+Cafe+Satya+Niketan" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 hover:text-primary transition-colors duration-300 group text-left">
+                <MapPin className="w-6 h-6 text-primary mt-1 group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,105,180,0.8)] transition-transform duration-300 flex-shrink-0" />
                 <div>
                   <h3 className="font-serif text-xl text-primary mb-2">Location</h3>
                   <p className="max-w-xs leading-relaxed group-hover:text-white transition-colors">
-                    The Litup Cafe & Lounge<br />
-                    F-21, 2nd Floor, Opp. NDPL Office,<br />
-                    Hudson Lane, GTB Nagar, Delhi – 110009
+                    Sharrazz Cafe & Roof Top Dining<br />
+                    298, Third Floor, Satya Niketan,<br />
+                    South Moti Bagh, New Delhi – 110021<br />
+                    (Opposite Sri Venkateswara College)
                   </p>
                 </div>
               </a>
-              <a href="tel:+917982488464" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group">
-                <Phone className="w-6 h-6 text-primary group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-transform duration-300 flex-shrink-0" />
+              <a href="tel:+919899282709" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group">
+                <Phone className="w-6 h-6 text-primary group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,105,180,0.8)] transition-transform duration-300 flex-shrink-0" />
                 <div>
                   <h3 className="font-serif text-xl text-primary mb-1">Reservations</h3>
-                  <p className="tracking-widest group-hover:text-white transition-colors">+91 79824 88464</p>
+                  <p className="tracking-widest group-hover:text-white transition-colors">+91 98992 82709</p>
                 </div>
               </a>
-              <a href="https://www.instagram.com/the_lit_up_cafe/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group">
-                <Instagram className="w-6 h-6 text-primary group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-transform duration-300 flex-shrink-0" />
+              <a href="https://www.instagram.com/sharrazzcafe/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 hover:text-primary transition-colors duration-300 group">
+                <Instagram className="w-6 h-6 text-primary group-hover:scale-110 group-hover:drop-shadow-[0_0_10px_rgba(255,105,180,0.8)] transition-transform duration-300 flex-shrink-0" />
                 <div>
                   <h3 className="font-serif text-xl text-primary mb-1">Follow Us</h3>
-                  <p className="tracking-widest group-hover:text-white transition-colors">@the_lit_up_cafe</p>
+                  <p className="tracking-widest group-hover:text-white transition-colors">@sharrazzcafe</p>
                 </div>
               </a>
             </SectionReveal>

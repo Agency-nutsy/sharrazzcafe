@@ -1,24 +1,25 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { createPortal } from "react-dom"; // 🔥 ADDED THIS: To teleport the lightbox
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionReveal from "@/components/SectionReveal";
-import img1 from "@/assets/litup hero.png";
-import img2 from "@/assets/litup home 1.png";
-import img3 from "@/assets/litup about 1.png";
-import img4 from "@/assets/litup about 2.png";
-import img5 from "@/assets/litup gallery 1.png";
-import img6 from "@/assets/litup gallery 2.png";
-import img7 from "@/assets/litup gallery 3.png";
-import img8 from "@/assets/litup gallery 4.png";
-import img9 from "@/assets/litup gallery 5.png";
-import img10 from "@/assets/litup gallery 6.png";
+// Keep your existing imports, they will now load the Sharrazz images
+import img1 from "@/assets/gallery 1.png";
+import img2 from "@/assets/gallery 2.png";
+import img3 from "@/assets/gallery 3.png";
+import img4 from "@/assets/gallery 4.png";
+import img5 from "@/assets/gallery 5.png";
+import img6 from "@/assets/gallery 6.png";
+import img7 from "@/assets/gallery 7.png";
+import img8 from "@/assets/gallery 8.png";
+import img9 from "@/assets/gallery 9.png";
+import img10 from "@/assets/gallery 10.png";
 
 // Combined image array
 const allImages = [img1, img2, img3, img4, img5, img6, img7, img8, img9, img10];
 
-// --- THE EMBER PARTICLES REVEAL EFFECT ---
-const EmberShatterEffect = ({ isAnimating }: { isAnimating: boolean }) => {
+// --- THE ROSE PARTICLES REVEAL EFFECT ---
+const RoseShatterEffect = ({ isAnimating }: { isAnimating: boolean }) => {
   const particles = useMemo(() => {
     return Array.from({ length: 120 }).map((_, i) => ({
       id: i,
@@ -56,12 +57,12 @@ const EmberShatterEffect = ({ isAnimating }: { isAnimating: boolean }) => {
                 ease: [0.16, 1, 0.3, 1], // Smooth premium ease
                 delay: p.delay
               }}
-              // Changed from gold to glowing hot ember
-              className="absolute rounded-full bg-[#ff5a00]"
+              // Glowing hot rose pink
+              className="absolute rounded-full bg-[#ff2d85]"
               style={{
                 width: p.size,
                 height: p.size,
-                boxShadow: "0 0 15px rgba(255,90,0,1)",
+                boxShadow: "0 0 15px rgba(255,45,133,1)",
               }}
             />
           ))}
@@ -71,8 +72,8 @@ const EmberShatterEffect = ({ isAnimating }: { isAnimating: boolean }) => {
   );
 };
 
-// --- IMMERSIVE EMBER REVEAL CAROUSEL ---
-const EmberChronicleCarousel = () => {
+// --- IMMERSIVE AURA REVEAL CAROUSEL ---
+const AuraChronicleCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef(null);
@@ -83,11 +84,11 @@ const EmberChronicleCarousel = () => {
     return [allImages[0], allImages[4], allImages[8], allImages[6], allImages[9]];
   }, []);
 
-  // Handle image change with ember animation
+  // Handle image change with aura animation
   const changeImage = useCallback((newIndex: number) => {
     if (isAnimating) return;
     setIsAnimating(true);
-    // Embers "explode" immediately, image changes after 300ms
+    // Particles "explode" immediately, image changes after 300ms
     setTimeout(() => {
       setCurrentIndex(newIndex);
     }, 300);
@@ -110,9 +111,9 @@ const EmberChronicleCarousel = () => {
   }, [isInView, isAnimating, navigate]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[80vh] bg-[#0a0402] overflow-hidden group">
-      {/* 1. THE EMBER SHATTER OVERLAY */}
-      <EmberShatterEffect isAnimating={isAnimating} />
+    <div ref={containerRef} className="relative w-full h-[80vh] bg-[#0f050a] overflow-hidden group">
+      {/* 1. THE ROSE SHATTER OVERLAY */}
+      <RoseShatterEffect isAnimating={isAnimating} />
 
       {/* 2. THE IMAGE */}
       <AnimatePresence mode="wait">
@@ -126,11 +127,11 @@ const EmberChronicleCarousel = () => {
         >
           <img
             src={featuredImages[currentIndex]}
-            alt={`Featured Legacy ${currentIndex + 1}`}
-            className="w-full h-full object-cover opacity-80"
+            alt={`Featured Sharrazz Vibe ${currentIndex + 1}`}
+            className="w-full h-full object-cover opacity-60"
           />
           {/* Deep atmospheric overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0402] via-[#0a0402]/30 to-[#0a0402]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0f050a] via-[#0f050a]/30 to-[#0f050a]" />
           <div className="absolute inset-0 bg-primary/10 mix-blend-color-dodge pointer-events-none" />
         </motion.div>
       </AnimatePresence>
@@ -143,13 +144,13 @@ const EmberChronicleCarousel = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-                <div className="w-16 h-[1px] bg-primary mx-auto mb-10 shadow-[0_0_15px_rgba(255,90,0,1)]" />
+                <div className="w-16 h-[1px] bg-primary mx-auto mb-10 shadow-[0_0_15px_rgba(255,45,133,1)]" />
                 <blockquote className="font-serif text-3xl md:text-5xl lg:text-6xl text-white tracking-widest leading-relaxed drop-shadow-[0_0_15px_rgba(0,0,0,0.8)] max-w-5xl mx-auto select-none">
-                    Unearthing <span className="text-primary italic">Atmosphere.</span><br/>
-                    Forging <span className="text-primary font-bold">Flavor.</span>
+                    Elevating <span className="text-primary italic">Aesthetics.</span><br/>
+                    Capturing <span className="text-primary font-bold">Vibes.</span>
                 </blockquote>
                 <p className="text-muted-foreground text-[10px] md:text-xs tracking-[0.5em] uppercase mt-12">
-                   The Ember Chronicle Collection
+                   The Sharrazz Rooftop Collection
                 </p>
             </motion.div>
         </div>
@@ -159,13 +160,13 @@ const EmberChronicleCarousel = () => {
       <div className="absolute inset-0 z-50 flex items-center justify-between px-6 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
         <button
           onClick={(e) => { e.stopPropagation(); navigate(-1); }}
-          className="pointer-events-auto p-4 rounded-full bg-[#0a0402]/60 text-primary border border-primary/20 backdrop-blur-sm hover:bg-primary hover:text-[#0a0402] hover:border-primary transition-all duration-300 transform -translate-x-4 group-hover:translate-x-0 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(255,90,0,0.6)]"
+          className="pointer-events-auto p-4 rounded-full bg-[#0f050a]/60 text-primary border border-primary/20 backdrop-blur-sm hover:bg-primary hover:text-[#0f050a] hover:border-primary transition-all duration-300 transform -translate-x-4 group-hover:translate-x-0 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(255,45,133,0.6)]"
         >
           <ChevronLeft className="w-8 h-8" />
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); navigate(1); }}
-          className="pointer-events-auto p-4 rounded-full bg-[#0a0402]/60 text-primary border border-primary/20 backdrop-blur-sm hover:bg-primary hover:text-[#0a0402] hover:border-primary transition-all duration-300 transform translate-x-4 group-hover:translate-x-0 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(255,90,0,0.6)]"
+          className="pointer-events-auto p-4 rounded-full bg-[#0f050a]/60 text-primary border border-primary/20 backdrop-blur-sm hover:bg-primary hover:text-[#0f050a] hover:border-primary transition-all duration-300 transform translate-x-4 group-hover:translate-x-0 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(255,45,133,0.6)]"
         >
           <ChevronRight className="w-8 h-8" />
         </button>
@@ -181,7 +182,7 @@ const EmberChronicleCarousel = () => {
           >
             <div className={`h-[1px] rounded-full transition-all duration-500 ${
               i === currentIndex
-                ? "w-10 bg-primary shadow-[0_0_10px_rgba(255,90,0,1)]"
+                ? "w-10 bg-primary shadow-[0_0_10px_rgba(255,45,133,1)]"
                 : "w-4 bg-primary/30 group-hover:bg-primary/70"
             }`} />
           </button>
@@ -230,24 +231,24 @@ const Gallery = () => {
   }, [lightbox]);
 
   return (
-    <main className="pt-32 magma-bg text-foreground min-h-screen relative overflow-hidden">
+    <main className="pt-32 aura-bg text-foreground min-h-screen relative overflow-hidden">
       
-      {/* MAGMA ANIMATION CSS */}
+      {/* SHARRAZZ AURA ANIMATION CSS */}
       <style>{`
-        @keyframes magmaBreath {
+        @keyframes auraBreath {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 50% 100%; }
         }
-        .magma-bg {
+        .aura-bg {
           background-color: transparent;
           background-image: 
-            radial-gradient(circle at 15% 50%, rgba(255, 60, 0, 0.25), transparent 50%),
-            radial-gradient(circle at 85% 30%, rgba(200, 20, 0, 0.35), transparent 50%),
-            radial-gradient(circle at 50% 80%, rgba(255, 100, 0, 0.2), transparent 60%);
+            radial-gradient(circle at 15% 50%, rgba(255, 45, 133, 0.15), transparent 50%),
+            radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 50%),
+            radial-gradient(circle at 50% 80%, rgba(212, 175, 55, 0.1), transparent 60%);
           background-attachment: fixed;
           background-size: 200% 200%;
-          animation: magmaBreath 12s ease-in-out infinite alternate;
+          animation: auraBreath 12s ease-in-out infinite alternate;
         }
       `}</style>
 
@@ -262,13 +263,13 @@ const Gallery = () => {
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 1 }}
           >
-            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-primary tracking-[0.15em] mb-4 drop-shadow-[0_0_15px_rgba(255,90,0,0.5)]">
+            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-primary tracking-[0.15em] mb-4 drop-shadow-[0_0_15px_rgba(255,45,133,0.5)]">
               THE GALLERY
             </h1>
             <p className="text-muted-foreground text-xs md:text-sm tracking-[0.4em] uppercase font-bold drop-shadow-md">
-              Moments forged in time.
+              Rooftop memories forged in time.
             </p>
-            <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-8 shadow-[0_0_10px_rgba(255,90,0,0.8)]" />
+            <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-8 shadow-[0_0_10px_rgba(255,45,133,0.8)]" />
           </motion.div>
         </SectionReveal>
       </section>
@@ -282,32 +283,31 @@ const Gallery = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                className="group relative overflow-hidden rounded-xl break-inside-avoid cursor-pointer bg-[#0a0402] border border-primary/10 shadow-lg hover:shadow-[0_0_20px_rgba(255,90,0,0.3)] transition-all duration-500"
+                className="group relative overflow-hidden rounded-xl break-inside-avoid cursor-pointer bg-[#0f050a] border border-primary/10 shadow-lg hover:shadow-[0_0_20px_rgba(255,45,133,0.3)] transition-all duration-500"
                 onClick={() => setLightbox(i)}
               >
                 <img
                   src={src}
-                  alt={`Litup Cafe gallery ${i + 1}`}
+                  alt={`Sharrazz Cafe gallery ${i + 1}`}
                   className="w-full object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
                   loading="lazy"
                 />
                 
-                {/* Interactive Glowing Ember Border & Overlay */}
+                {/* Interactive Glowing Rose Border & Overlay */}
                 <div className="absolute inset-0 border border-transparent group-hover:border-primary/40 transition-colors duration-500 rounded-xl z-10 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402]/60 via-transparent to-transparent opacity-30 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0f050a]/60 via-transparent to-transparent opacity-30 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none" />
               </motion.div>
             </SectionReveal>
           ))}
         </div>
       </section>
 
-      {/* --- EPIC END-OF-PAGE FEATURE: THE EMBER CHRONICLE --- */}
-      <section className="w-full mt-12 border-y border-primary/20 shadow-[0_0_30px_rgba(255,90,0,0.1)]">
-         <EmberChronicleCarousel />
+      {/* --- EPIC END-OF-PAGE FEATURE: THE AURA CHRONICLE --- */}
+      <section className="w-full mt-12 border-y border-primary/20 shadow-[0_0_30px_rgba(255,45,133,0.1)]">
+         <AuraChronicleCarousel />
       </section>
 
       {/* 🔥 THE FIX: PORTAL RENDERING FOR THE LIGHTBOX 🔥 */}
-      {/* This teleports the lightbox completely out of your page structure so it perfectly overlays the screen, no matter your scroll position */}
       {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {lightbox !== null && (
@@ -317,17 +317,17 @@ const Gallery = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               // z-[9999] guarantees it sits on top of absolute everything (navbars, etc.)
-              className="fixed inset-0 z-[9999] bg-[#0a0402]/98 backdrop-blur-2xl flex flex-col items-center justify-center"
+              className="fixed inset-0 z-[9999] bg-[#0f050a]/98 backdrop-blur-2xl flex flex-col items-center justify-center"
               onClick={() => setLightbox(null)}
             >
               {/* Top Bar with Close Button */}
               <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
-                <span className="font-serif text-primary tracking-[0.3em] text-xs uppercase font-bold drop-shadow-[0_0_8px_rgba(255,90,0,0.5)]">
-                  LITUP CAFE ARCHIVES
+                <span className="font-serif text-primary tracking-[0.3em] text-xs uppercase font-bold drop-shadow-[0_0_8px_rgba(255,45,133,0.5)]">
+                  SHARRAZZ CAFE ARCHIVES
                 </span>
                 <button
                   onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
-                  className="text-white/50 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-2 hover:rotate-90 transform"
+                  className="text-white/50 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,45,133,0.8)] transition-all duration-300 p-2 hover:rotate-90 transform"
                 >
                   <X className="w-8 h-8" />
                 </button>
@@ -336,13 +336,13 @@ const Gallery = () => {
               {/* Navigation Arrows */}
               <button
                 onClick={(e) => { e.stopPropagation(); navigateLightbox(-1); }}
-                className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-4 z-50 hover:-translate-x-2 transform"
+                className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,45,133,0.8)] transition-all duration-300 p-4 z-50 hover:-translate-x-2 transform"
               >
                 <ChevronLeft className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); navigateLightbox(1); }}
-                className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,90,0,0.8)] transition-all duration-300 p-4 z-50 hover:translate-x-2 transform"
+                className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary hover:drop-shadow-[0_0_10px_rgba(255,45,133,0.8)] transition-all duration-300 p-4 z-50 hover:translate-x-2 transform"
               >
                 <ChevronRight className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1} />
               </button>
@@ -356,17 +356,17 @@ const Gallery = () => {
                   exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
                   src={allImages[lightbox]}
-                  alt={`Litup Cafe Gallery ${lightbox + 1}`}
-                  className="max-w-full max-h-full object-contain rounded-sm shadow-[0_0_50px_rgba(255,90,0,0.15)]"
+                  alt={`Sharrazz Cafe Gallery ${lightbox + 1}`}
+                  className="max-w-full max-h-full object-contain rounded-sm shadow-[0_0_50px_rgba(255,45,133,0.15)]"
                   onClick={(e) => e.stopPropagation()}
                 />
               </div>
 
               {/* Bottom Counter */}
               <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
-                <span className="font-serif text-primary tracking-[0.4em] text-sm flex items-center gap-3 drop-shadow-[0_0_8px_rgba(255,90,0,0.5)]">
+                <span className="font-serif text-primary tracking-[0.4em] text-sm flex items-center gap-3 drop-shadow-[0_0_8px_rgba(255,45,133,0.5)]">
                   {String(lightbox + 1).padStart(2, '0')}
-                  <span className="w-8 h-[1px] bg-primary/40 shadow-[0_0_5px_rgba(255,90,0,0.5)]" />
+                  <span className="w-8 h-[1px] bg-primary/40 shadow-[0_0_5px_rgba(255,45,133,0.5)]" />
                   {String(allImages.length).padStart(2, '0')}
                 </span>
               </div>

@@ -4,50 +4,37 @@
 
 @layer base {
   :root {
-    /* --- LITUP MAGMA TYPOGRAPHY & COLOR PALETTE --- */
-    --background: 12 70% 4%; 
-    --foreground: 35 40% 92%; 
-    --card: 14 65% 6%;
-    --card-foreground: 35 40% 92%;
-    --popover: 14 65% 6%;
-    --popover-foreground: 35 40% 92%;
+    /* --- SHARRAZZ AESTHETIC PALETTE --- */
+    --background: 280 20% 4%; /* Deep Midnight Purple-Black */
+    --foreground: 320 10% 95%; /* Soft Off-White Rose */
     
-    /* The main glowing fire accent */
-    --primary: 18 95% 55%; 
-    --primary-foreground: 12 70% 4%;
+    --card: 280 25% 7%;
+    --card-foreground: 320 10% 95%;
     
-    --secondary: 15 80% 12%; 
-    --secondary-foreground: 35 40% 92%;
+    --popover: 280 25% 7%;
+    --popover-foreground: 320 10% 95%;
     
-    --muted: 15 60% 10%;
-    --muted-foreground: 20 20% 65%; 
+    /* Elegant Rose Pink */
+    --primary: 335 85% 65%; 
+    --primary-foreground: 280 20% 4%;
     
-    --accent: 25 95% 55%; 
-    --accent-foreground: 12 70% 4%;
+    --secondary: 260 30% 15%; 
+    --secondary-foreground: 320 10% 95%;
     
-    --destructive: 0 84.2% 60.2%;
+    --muted: 260 20% 12%;
+    --muted-foreground: 280 10% 65%; 
+    
+    /* Champagne Gold Accents */
+    --accent: 45 70% 60%; 
+    --accent-foreground: 280 20% 4%;
+    
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-    --border: 15 70% 15%; 
-    --input: 15 60% 8%;
-    --ring: 18 95% 55%;
-    --radius: 0.25rem;
     
-    /* Adjusted custom vars */
-    --gold: 25 95% 55%;
-    --gold-light: 45 100% 70%;
-    --gold-dark: 10 85% 35%;
-    --maroon: 10 85% 25%;
-    --parchment: 35 40% 92%;
-    
-    /* Sidebar matching the magma vibe */
-    --sidebar-background: 12 70% 4%;
-    --sidebar-foreground: 35 40% 92%;
-    --sidebar-primary: 18 95% 55%;
-    --sidebar-primary-foreground: 12 70% 4%;
-    --sidebar-accent: 15 80% 12%;
-    --sidebar-accent-foreground: 35 40% 92%;
-    --sidebar-border: 15 70% 15%;
-    --sidebar-ring: 18 95% 55%;
+    --border: 260 20% 18%; 
+    --input: 260 20% 10%;
+    --ring: 335 85% 65%;
+    --radius: 0.75rem; /* Smoother, rounder corners */
   }
 }
 
@@ -58,143 +45,84 @@
   body {
     @apply text-foreground;
     font-family: 'Montserrat', sans-serif;
-    cursor: none;
-
-    /* --- THE UNMISSABLE MAGMA BACKGROUND --- */
-    background-color: #0a0402;
+    
+    /* --- ELEGANT NIGHT ROOFTOP BACKGROUND --- */
+    background-color: #0c0810;
     background-image: 
-      radial-gradient(circle at 20% 40%, rgba(255, 90, 0, 0.25), transparent 55%),
-      radial-gradient(circle at 80% 60%, rgba(204, 30, 0, 0.3), transparent 55%),
-      radial-gradient(circle at 50% 90%, rgba(255, 120, 0, 0.15), transparent 65%);
+      radial-gradient(circle at 10% 20%, rgba(255, 45, 133, 0.12), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.03), transparent 60%);
     background-attachment: fixed;
-    background-size: 200% 200%;
-    animation: magmaBreath 12s ease-in-out infinite alternate;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', serif;
   }
 }
 
-/* Global Magma Breath Animation */
-@keyframes magmaBreath {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 50% 100%; }
-}
-
-/* Custom scrollbar - Updated to fiery tones */
+/* Custom smooth scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: hsl(12 70% 4%); }
-::-webkit-scrollbar-thumb { background: hsl(18 95% 55% / 0.5); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: hsl(18 95% 55% / 0.8); }
+::-webkit-scrollbar-track { background: hsl(280 20% 4%); }
+::-webkit-scrollbar-thumb { background: hsl(335 85% 65% / 0.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(335 85% 65% / 0.6); }
 
-/* Shimmer animation */
+/* Rose & Gold Shimmer */
 @keyframes shimmer {
   0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
+  100% { background-position: 200% center; }
 }
 
-/* Flowing, burning heat text */
 .text-shimmer {
   background: linear-gradient(
     90deg,
-    hsl(10 85% 35%)  0%,   
-    hsl(18 95% 55%)  18%,  
-    hsl(25 95% 55%)  36%,  
-    hsl(45 100% 70%) 50%,  
-    hsl(25 95% 55%)  64%,  
-    hsl(18 95% 55%)  82%,  
-    hsl(10 85% 35%) 100%   
+    #ff2d85 0%,   
+    #ff71ab 25%,  
+    #f9e5af 50%,  
+    #ff71ab 75%,  
+    #ff2d85 100%   
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 4s linear infinite;
+  animation: shimmer 5s linear infinite;
 }
 
-/* Button shimmer sweep */
-@keyframes btn-shimmer {
-  0%   { left: -100%; }
-  100% { left:  200%; }
-}
-
-/* Premium magma button */
+/* Premium Aesthetic Button */
 .btn-gold {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, hsl(25 95% 55%), hsl(15 90% 40%));
-  color: hsl(35 40% 92%); 
+  background: linear-gradient(135deg, #ff2d85, #b00052);
+  color: white; 
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(255, 90, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 20px rgba(255, 45, 133, 0.2);
 }
+
 .btn-gold::after {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
-  width: 50%;
+  width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, hsl(45 100% 70% / 0.4), transparent);
-  transition: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
 }
-.btn-gold:hover::after {
-  animation: btn-shimmer 0.6s ease-out;
-}
+
 .btn-gold:hover {
-  box-shadow: 0 6px 20px rgba(255, 90, 0, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 45, 133, 0.4);
 }
 
-/* FIXED: Premium Volcanic Rock Texture */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  /* Boosted opacity so it's actually visible */
-  opacity: 0.20; 
-  /* Changed from color-burn to overlay so it shows on dark backgrounds */
-  mix-blend-mode: overlay; 
-  /* Standard, high-contrast fractal noise SVG */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
+.btn-gold:hover::after {
+  left: 100%;
 }
 
-/* Marquee */
+/* Clean Marquee */
 @keyframes marquee {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.marquee-track { animation: marquee 20s linear infinite; }
+.marquee-track { animation: marquee 30s linear infinite; }
 
-@media (pointer: coarse) { body { cursor: auto; } }
-
-@keyframes blink-caret { 50% { border-color: transparent; } }
-
-/* =========================================
-   MOBILE OPTIMIZATIONS (120 FPS SAVER) 
-   ========================================= */
-@media (max-width: 768px) {
-  /* 1. Simplify the Body Background */
-  body {
-    /* 'fixed' causes severe scrolling lag on iOS/Android. Change to scroll. */
-    background-attachment: scroll !important; 
-    
-    /* Stop the heavy CPU repaint animation. The gradient will still look great, it just won't shift. */
-    animation: none !important; 
-  }
-
-  /* 2. Kill the Grain Overlay on Mobile */
-  .grain-overlay {
-    /* mix-blend-mode over the whole screen is a GPU killer on phones. We hide it entirely. */
-    display: none !important; 
-  }
-
-  /* 3. Disable Text Shimmer Animation on Mobile */
-  .text-shimmer {
-    /* Stops the background-position animation on text to save battery and frames */
-    animation: none !important;
-    background-position: 0% center !important;
-  }
-}
+/* Removed the Grain Overlay entirely per your request */

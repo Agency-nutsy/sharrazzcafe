@@ -52,8 +52,8 @@ const Navbar = () => {
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
         className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 ${
           scrolled
-            // Dark magma glass effect when scrolling
-            ? "h-20 bg-[#0a0402]/90 backdrop-blur-2xl border-b border-primary/20 shadow-[0_10px_40px_rgba(0,0,0,0.8)]"
+            // Dark aura glass effect when scrolling
+            ? "h-20 bg-[#0f050a]/90 backdrop-blur-2xl border-b border-primary/20 shadow-[0_10px_40px_rgba(0,0,0,0.8)]"
             : "h-28 bg-transparent border-b border-transparent"
         }`}
       >
@@ -62,10 +62,10 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="group relative flex flex-col">
             <span className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-[0.15em] transition-colors group-hover:text-white">
-              LITUP
+              SHARRAZZ
             </span>
             <span className="text-[9px] uppercase tracking-[0.4em] text-primary/40 -mt-1 group-hover:text-primary transition-colors">
-              Cafe & Lounge
+              Rooftop Dining
             </span>
           </Link>
 
@@ -85,8 +85,8 @@ const Navbar = () => {
                     {isActive && (
                       <motion.div
                         layoutId="activeNav"
-                        // Hot ember active line
-                        className="absolute bottom-0 left-0 w-full h-[2px] bg-primary shadow-[0_0_10px_rgba(255,90,0,0.8)]"
+                        // Hot rose active line
+                        className="absolute bottom-0 left-0 w-full h-[2px] bg-primary shadow-[0_0_10px_rgba(255,45,133,0.8)]"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -101,10 +101,10 @@ const Navbar = () => {
           {/* Reserve Button & Mobile Toggle */}
           <div className="flex items-center gap-6">
             <motion.a
-              href="tel:+917982488464"
+              href="tel:+919899282709"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="hidden lg:flex items-center gap-3 px-8 py-3 border border-primary/30 rounded-sm text-[10px] uppercase tracking-[0.2em] font-bold text-primary hover:bg-primary hover:text-[#0a0402] transition-all duration-500 hover:shadow-[0_0_20px_rgba(255,90,0,0.4)]"
+              className="hidden lg:flex items-center gap-3 px-8 py-3 border border-primary/30 rounded-sm text-[10px] uppercase tracking-[0.2em] font-bold text-primary hover:bg-primary hover:text-[#0f050a] transition-all duration-500 hover:shadow-[0_0_20px_rgba(255,45,133,0.4)]"
             >
               <Phone size={14} />
               Reserve Table
@@ -123,7 +123,7 @@ const Navbar = () => {
         <div className="absolute bottom-0 left-0 w-full h-[2px] bg-transparent overflow-hidden">
           <motion.div
             className="h-full bg-primary relative"
-            style={{ width: `${scrollProgress}%`, boxShadow: "0 0 10px rgba(255,90,0,1)", transition: "width 0.1s ease-out" }}
+            style={{ width: `${scrollProgress}%`, boxShadow: "0 0 10px rgba(255,45,133,1)", transition: "width 0.1s ease-out" }}
           >
             <div className="absolute right-0 top-0 h-full w-4 bg-white/30 blur-[2px]" />
           </motion.div>
@@ -138,7 +138,7 @@ const Navbar = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[120] bg-[#0a0402]/98 backdrop-blur-xl flex flex-col p-12"
+            className="fixed inset-0 z-[120] bg-[#0f050a]/98 backdrop-blur-xl flex flex-col p-12"
           >
             <div className="flex justify-end">
               <button onClick={() => setMobileOpen(false)} className="text-primary hover:scale-110 transition-transform">
@@ -165,8 +165,8 @@ const Navbar = () => {
             </nav>
             <div className="mt-auto border-t border-primary/10 pt-8">
               <p className="text-primary/40 text-[10px] uppercase tracking-[0.5em] mb-2">Reservations</p>
-              <a href="tel:+917982488464" className="font-serif text-3xl text-primary hover:text-white transition-colors">
-                +91 79824 88464
+              <a href="tel:+919899282709" className="font-serif text-3xl text-primary hover:text-white transition-colors">
+                +91 98992 82709
               </a>
             </div>
           </motion.div>
